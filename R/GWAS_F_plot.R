@@ -272,3 +272,32 @@ mapReorder = function(mapinfo){
     }
     list(mapinfo,chromsort)
 }
+
+
+# -----------------------------------------------------------------------------
+# Updated May 18, 2015 9:50 PM
+# Function:     
+# Description:  
+# input:        
+# ouput:        
+# -----------------------------------------------------------------------------
+CreateWindowMap = function(Map.single, distance){
+  
+  ## Reorder the map
+  Map.single = mapReorder(Map.single)[[1]]
+  
+  n.chrom = length(unique(Map.single[,2]))
+  pos.start = rep(0,n.chrom)
+  pos.end = tapply(Map.single[,3],Map.single[,2],max)
+  
+  n.windows = ceiling(pos.end / distance)
+  
+  info.chr = rep(1:n.chrom,times =n.windows)
+  window.name = unlist(lapply(n.windows,function(x) seq(1:x)),use.names = F)
+  info.pos = window.name - 0.5
+  info.ID = paste0(info.chr,"_",window.name)
+  
+  res = data.frame(ID = info.ID, chr = info.chr, pos = info.pos,stringsAsFactors = FALSE)
+}
+  
+  
