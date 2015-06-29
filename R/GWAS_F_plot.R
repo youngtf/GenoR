@@ -63,33 +63,37 @@ Manhattan.lite = function(res
                           , title= NULL       # frame
                           , ltype= "p"        # points
                           , cols = c("dark blue","cornflowerblue") # points
-                     ){    
-    if(is.null(ylim))  ylim = c(0,max(res[,2])*1.1)
-    
-    res.reorder = mapReorder(mapinfo)
-    mapinfo   = res.reorder[[1]]
-    chromsort = res.reorder[[2]]
- 
-    res.frame = DrawAFrame(res.reorder,type="pos",
-              ylim=ylim,ylab=ylab,title=title,gap=gap)
-      
-    ### prepare plotting data
-    idx.res = match(res[,1],mapinfo[,1])
-    idx.res.left  = which(!is.na(idx.res))
-    idx.res.right = idx.res[idx.res.left]
-    res.all = rep(0,nrow(mapinfo))
-    res.all[idx.res.right] = res[idx.res.left,2]
-    data.plot = cbind(mapinfo,res.all)
-    
-    for (chr in 1:res.frame$n.chrom){                     ### points
-        idx.chrom  = which(data.plot[,2] == chromsort[chr])
-        xs = res.frame$chrom.start[chr]+data.plot[idx.chrom,3]
-        ys = data.plot[idx.chrom,4]
-        points(xs,ys,col=cols[(chr%%2)+1],pch=16,type=ltype)
-    }
+                          , axes = TRUE
+){    
+  if(is.null(ylim))  ylim = c(0,max(res[,2])*1.1)
+  
+  res.reorder = mapReorder(mapinfo)
+  mapinfo   = res.reorder[[1]]
+  chromsort = res.reorder[[2]]
+  
+  res.frame = DrawAFrame(res.reorder,type="pos",
+                         ylim=ylim,ylab=ylab,title=title,gap=gap)
+  
+  ### prepare plotting data
+  idx.res = match(res[,1],mapinfo[,1])
+  idx.res.left  = which(!is.na(idx.res))
+  idx.res.right = idx.res[idx.res.left]
+  res.all = rep(0,nrow(mapinfo))
+  res.all[idx.res.right] = res[idx.res.left,2]
+  data.plot = cbind(mapinfo,res.all)
+  
+  for (chr in 1:res.frame$n.chrom){                     ### points
+    idx.chrom  = which(data.plot[,2] == chromsort[chr])
+    xs = res.frame$chrom.start[chr]+data.plot[idx.chrom,3]
+    ys = data.plot[idx.chrom,4]
+    points(xs,ys,col=cols[(chr%%2)+1],pch=16,type=ltype)
+  }
+  if (axes)
     axis(side=1,at=res.frame$chrom.mid,labels=chromsort) ### left axis
-    res.frame
+  
+  res.frame
 }
+
 
 Manhattan.win = function(res, mapinfo, gap  = 50
                          , ylim = NULL, ylab = NULL, title= NULL
