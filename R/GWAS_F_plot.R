@@ -301,3 +301,52 @@ CreateWindowMap = function(Map.single, distance){
 }
   
   
+# -----------------------------------------------------------------------------
+# Analysis Block
+# Type:              Analysis/Visualization/Functions/UnitTest
+# Descriptions:      A function to plot lsmeans results
+# Last Update:       Jun 29, 2015
+# -----------------------------------------------------------------------------
+plot.lsmeans = function(res.lm,SNPnames
+                        ,nSNPs = length(SNPnames)
+                        ,mfrow = c(1,nSNPs)
+                        ,ylim=c(2,6)
+                        ,ylab = "lsmean"){
+  plot.new()
+  par(mfrow = mfrow)
+  
+  for(i in seq(nSNPs)){
+    res.lsm = summary(lsmeans(res.lm,SNPnames[i]))
+    v.lsm = res.lsm$lsmean
+    v.lower = res.lsm$lower.CL
+    v.upper = res.lsm$upper.CL
+    v.name = names(res.lsm)[1]
+    n.level = length(v.lower)
+    name.levels = levels(res.lsm[[1]])
+    if (i == 1){
+      par(mar = c(4.1,5.1,2.1,1.1))
+      plot(0,col="white",ylim = ylim, xlim =c(0.5,n.level + 0.5)
+           ,xlab = v.name,ylab = ylab,axes = F,frame.plot =T)
+      axis(2)
+    } else {
+      par(mar = c(4.1,5.1,2.1,1.1))
+      plot(0,col="white",ylim = ylim, xlim =c(0.5,n.level + 0.5)
+           ,xlab = v.name,ylab = "",axes = F,frame.plot =T)
+      axis(2)
+    }
+    axis(1,labels = c(name.levels),at = 1:n.level)
+    
+    points(x = 1:n.level,y=v.lsm)
+    for (j in 1:n.level){
+      lines(x=c(j,j),y=c(v.lower[j],v.upper[j]))
+      lines(x=c(j-0.1,j+0.1),y=c(v.lower[j],v.lower[j]))
+      lines(x=c(j-0.1,j+0.1),y=c(v.upper[j],v.upper[j]))
+    }
+    
+    # table
+    genotype.snp = as.character(res.lm$model[,v.name])
+    for (j in 1:n.level){
+      text(j,ylim[1],sum(genotype.snp == name.levels[j]))
+    }
+  }
+}
