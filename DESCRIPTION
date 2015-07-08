@@ -7,4 +7,4 @@ Author: Tianfu Yang (tianfu@ualberta.ca)
 Maintainer: Tianfu Yang <tianfu@ualberta.ca>
 Description: Some functions for the analysis of genomic data, especially for GWAS.
 License: GPL-2
-Depends: glmnet
+Depends: Matrix
