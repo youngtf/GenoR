@@ -357,14 +357,57 @@ geno.monoAL2Num = function(monoAlle_AB
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Mar 13, 2015 14:32
-# 1 Don't use it until it can handle missing data
+# 1 Don't use it until it can handle missing data - check!
 #------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Unit test 
+# genodata = rbind(c("AA","AB","--")
+#                 ,c("AA","--","BB")
+#                 ,c("AB","AB","AB"))
+# geno.AB2Num(genodata)
+# #      [,1] [,2] [,3]
+# # [1,]    1    0    0
+# # [2,]    1    0   -1
+# # [3,]    0    0    0
+# geno.AB2Num(genodata,"--")
+# #      [,1] [,2] [,3]
+# # [1,]    1    0   NA
+# # [2,]    1   NA   -1
+# # [3,]    0    0    0
+# geno.Num2AB(geno.AB2Num(genodata,"--"))
+# #      [,1] [,2] [,3]
+# # [1,] "AA" "AB" NA  
+# # [2,] "AA" NA   "BB"
+# # [3,] "AB" "AB" "AB"
+# a = geno.AB2Num(genodata)
+# a[2,2] = -9
+# a
+# #      [,1] [,2] [,3]
+# # [1,]    1    0    0
+# # [2,]    1   -9   -1
+# # [3,]    0    0    0
+# geno.Num2AB(a,missing = -9)
+# #      [,1] [,2] [,3]
+# # [1,] "AA" "AB" "AB"
+# # [2,] "AA" NA   "BB"
+# # [3,] "AB" "AB" "AB"
+# -----------------------------------------------------------------------------
 
-geno.AB2Num = function(genodata){
-    (genodata == "AA") - (genodata == "BB")
+geno.AB2Num = function(genodata,missing = NULL){
+  if ((!is.null(missing)) & (any(genodata == missing))){
+    genodata[(genodata == missing)] = NA    
+  }
+  return((genodata == "AA") - (genodata == "BB"))
 }
 geno.Num2AB = function(genodata,
-                       code=c(1,0,-1)){
+                       code=c(1,0,-1),
+                       missing = NULL){
+  if (missing %in% code){
+    stop("Invalid missing code (ambiguous code)")
+  }
+  if ((!is.null(missing)) & (any(genodata == missing))){
+    genodata[(genodata == missing)] = NA
+  }
   if (any(genodata == code[3])){
     genodata[(genodata == code[3])] = "BB"
   }

@@ -53,6 +53,7 @@ clc.func=function(){
 #------------------------------------------------------------------------------
 # Function:    repmat(a,n,m)
 # Description: replication of matrix (a) n x m times 
+#               
 #------------------------------------------------------------------------------
 repmat <- function(a,nrow,ncol) {kronecker(matrix(1,nrow,ncol),a)}
 
@@ -108,6 +109,7 @@ blank.remover = function(vec.char){
 #               colScaling(InputMatrix,scaleFactor)
 # Description:  Each vector in the matrix is scaled using the corresponding
 #               element in the scaleFactor
+#               Thanks for Dr. Zhiquan Wang's contribution!
 # input:        InputMatrix: a numeric matrix (m * n)
 #               scaleFactor: a numeric factor (m / n)
 # ouput:        a numeric matrix m * n
