@@ -133,6 +133,116 @@ Manhattan.win = function(res, mapinfo, gap  = 50
   }
   axis(side=1,at=res.frame$chrom.mid,labels=chromsort) ### left axis
 }
+
+#------------------------------------------------------------------------------
+# Function:    
+# Description: 
+#------------------------------------------------------------------------------
+mapReorder = function(mapinfo){
+    # first column is marker name, second is chromosome, third is map position.
+    chromname = as.character(unique(mapinfo[,2]))
+    isnum = chromname %in% as.character(0:100)
+    if (any(!isnum)){
+        chromsort = c(sort(as.integer(chromname[isnum]))
+                      ,chromname[!isnum])
+        mapinfo   = mapinfo[order(match(mapinfo[,2],chromsort),mapinfo[,3]),]
+    }else{
+        chromsort = as.character(sort(as.integer(chromname)))
+        mapinfo   = mapinfo[order(mapinfo[,2],mapinfo[,3]),]
+    }
+    list(mapinfo,chromsort)
+}
+
+
+# -----------------------------------------------------------------------------
+# Updated May 18, 2015 9:50 PM
+# Function:     
+# Description:  
+# input:        
+# ouput:        
+# -----------------------------------------------------------------------------
+CreateWindowMap = function(Map.single, distance){
+  
+  ## Reorder the map
+  Map.single = mapReorder(Map.single)[[1]]
+  
+  n.chrom = length(unique(Map.single[,2]))
+  pos.start = rep(0,n.chrom)
+  pos.end = tapply(Map.single[,3],Map.single[,2],max)
+  
+  n.windows = ceiling(pos.end / distance)
+  
+  info.chr = rep(1:n.chrom,times =n.windows)
+  window.name = unlist(lapply(n.windows,function(x) seq(1:x)),use.names = F)
+  info.pos = window.name - 0.5
+  info.ID = paste0(info.chr,"_",window.name)
+  
+  res = data.frame(ID = info.ID, chr = info.chr, pos = info.pos,
+                   stringsAsFactors = FALSE)
+}
+  
+  
+# -----------------------------------------------------------------------------
+# Analysis Block
+# Type:              Analysis/Visualization/Functions/UnitTest
+# Descriptions:      A function to plot lsmeans results
+# Last Update:       Jun 29, 2015
+# -----------------------------------------------------------------------------
+plot.lsmeans = function(res.lm,SNPnames
+                        ,nSNPs = length(SNPnames)
+                        ,mfrow = c(1,nSNPs)
+                        ,mar   = c(4.1,5.1,2.1,1.1)
+                        ,ylim  = c(2,6)
+                        ,ylab = "lsmean"
+                        ,xlab = NULL){
+  # check parameters
+  if (!is.null(xlab)){
+    if(length(xlab) != nSNPs){
+      stop("The length of xlab is different from that of SNPs.")  
+    }
+  }
+  plot.new()
+  par(mfrow = mfrow)
+  par(mar = mar)
+  
+  for(i in seq(nSNPs)){
+    res.lsm = summary(lsmeans(res.lm,SNPnames[i]))
+    v.lsm = res.lsm$lsmean
+    v.lower = res.lsm$lower.CL
+    v.upper = res.lsm$upper.CL
+    v.name = names(res.lsm)[1]
+    if (is.null(xlab)){
+      x_lab = v.name
+    } else {
+      x_lab = xlab[i]
+    }
+    n.level = length(v.lower)
+    name.levels = levels(res.lsm[[1]])
+    if (i == 1){
+      plot(0,col="white",ylim = ylim, xlim =c(0.5,n.level + 0.5),
+           xlab = "", ylab = ylab,axes = F,frame.plot =T)
+    } else {
+      plot(0,col="white",ylim = ylim, xlim =c(0.5,n.level + 0.5),
+           xlab = "", ylab = "",axes = F,frame.plot =T)
+    }
+    title(xlab = x_lab,line = 4)
+    axis(2)
+    axis(1,labels = c(name.levels),at = 1:n.level)
+    
+    points(x = 1:n.level,y=v.lsm)
+    for (j in 1:n.level){
+      lines(x=c(j,j),y=c(v.lower[j],v.upper[j]))
+      lines(x=c(j-0.1,j+0.1),y=c(v.lower[j],v.lower[j]))
+      lines(x=c(j-0.1,j+0.1),y=c(v.upper[j],v.upper[j]))
+    }
+    
+    # table
+    genotype.snp = as.character(res.lm$model[,v.name])
+    for (j in 1:n.level){
+      text(j,ylim[1],sum(genotype.snp == name.levels[j]))
+    }
+  }
+}
 #------------------------------------------------------------------------------
 # Function:    MultiManhattan(res,mapinfo,ylim0 = NULL,ylab = NULL
 #                            ,gap  = NULL,ltype= "h",title= NULL,sub = NULL)
@@ -258,99 +368,4 @@ Manhattan.win = function(res, mapinfo, gap  = 50
 #   axis(side=1,at=chrom.mid,labels=chromsort)
 #   
 # }
-#------------------------------------------------------------------------------
-# Function:    
-# Description: 
-#------------------------------------------------------------------------------
-mapReorder = function(mapinfo){
-    # first column is marker name, second is chromosome, third is map position.
-    chromname = as.character(unique(mapinfo[,2]))
-    isnum = chromname %in% as.character(0:100)
-    if (any(!isnum)){
-        chromsort = c(sort(as.integer(chromname[isnum]))
-                      ,chromname[!isnum])
-        mapinfo   = mapinfo[order(match(mapinfo[,2],chromsort),mapinfo[,3]),]
-    }else{
-        chromsort = as.character(sort(as.integer(chromname)))
-        mapinfo   = mapinfo[order(mapinfo[,2],mapinfo[,3]),]
-    }
-    list(mapinfo,chromsort)
-}
 
-
-# -----------------------------------------------------------------------------
-# Updated May 18, 2015 9:50 PM
-# Function:     
-# Description:  
-# input:        
-# ouput:        
-# -----------------------------------------------------------------------------
-CreateWindowMap = function(Map.single, distance){
-  
-  ## Reorder the map
-  Map.single = mapReorder(Map.single)[[1]]
-  
-  n.chrom = length(unique(Map.single[,2]))
-  pos.start = rep(0,n.chrom)
-  pos.end = tapply(Map.single[,3],Map.single[,2],max)
-  
-  n.windows = ceiling(pos.end / distance)
-  
-  info.chr = rep(1:n.chrom,times =n.windows)
-  window.name = unlist(lapply(n.windows,function(x) seq(1:x)),use.names = F)
-  info.pos = window.name - 0.5
-  info.ID = paste0(info.chr,"_",window.name)
-  
-  res = data.frame(ID = info.ID, chr = info.chr, pos = info.pos,stringsAsFactors = FALSE)
-}
-  
-  
-# -----------------------------------------------------------------------------
-# Analysis Block
-# Type:              Analysis/Visualization/Functions/UnitTest
-# Descriptions:      A function to plot lsmeans results
-# Last Update:       Jun 29, 2015
-# -----------------------------------------------------------------------------
-plot.lsmeans = function(res.lm,SNPnames
-                        ,nSNPs = length(SNPnames)
-                        ,mfrow = c(1,nSNPs)
-                        ,ylim=c(2,6)
-                        ,ylab = "lsmean"){
-  plot.new()
-  par(mfrow = mfrow)
-  
-  for(i in seq(nSNPs)){
-    res.lsm = summary(lsmeans(res.lm,SNPnames[i]))
-    v.lsm = res.lsm$lsmean
-    v.lower = res.lsm$lower.CL
-    v.upper = res.lsm$upper.CL
-    v.name = names(res.lsm)[1]
-    n.level = length(v.lower)
-    name.levels = levels(res.lsm[[1]])
-    if (i == 1){
-      par(mar = c(4.1,5.1,2.1,1.1))
-      plot(0,col="white",ylim = ylim, xlim =c(0.5,n.level + 0.5)
-           ,xlab = v.name,ylab = ylab,axes = F,frame.plot =T)
-      axis(2)
-    } else {
-      par(mar = c(4.1,5.1,2.1,1.1))
-      plot(0,col="white",ylim = ylim, xlim =c(0.5,n.level + 0.5)
-           ,xlab = v.name,ylab = "",axes = F,frame.plot =T)
-      axis(2)
-    }
-    axis(1,labels = c(name.levels),at = 1:n.level)
-    
-    points(x = 1:n.level,y=v.lsm)
-    for (j in 1:n.level){
-      lines(x=c(j,j),y=c(v.lower[j],v.upper[j]))
-      lines(x=c(j-0.1,j+0.1),y=c(v.lower[j],v.lower[j]))
-      lines(x=c(j-0.1,j+0.1),y=c(v.upper[j],v.upper[j]))
-    }
-    
-    # table
-    genotype.snp = as.character(res.lm$model[,v.name])
-    for (j in 1:n.level){
-      text(j,ylim[1],sum(genotype.snp == name.levels[j]))
-    }
-  }
-}

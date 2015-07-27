@@ -451,7 +451,7 @@ geno.QC.freq = function(genodata){                 # Major genotype frequency
   ngeno = colSums(mat.geno,na.rm=T) 
   #------------------------------------------------------------------------------
   # Mar 17, 2015 11:02
-  # 1 when ngeno == 0 the MAF may be not valid
+  # 1 when ngeno == 0 the MAF may be not valid (which may be removed in "missing")
   #------------------------------------------------------------------------------
   mat.alle.A   = (genodata == 1) * 2 + (genodata == 0)            # n.allele A
   freq.alle.A  = colSums(mat.alle.A,na.rm=T) / (2 * ngeno)
@@ -492,6 +492,18 @@ geno.QC.freq = function(genodata){                 # Major genotype frequency
 # Function:    geno.mono2PED.lite(monodata,         IndID,        Sex,Pheno)
 # Description: Create PED files
 #------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Jul 10, 2015 19:37
+# By default, each line of the MAP file describes a single marker and must 
+# contain exactly 4 columns: 
+#     chromosome (1-22, X, Y or 0 if unplaced) 
+#     rs# or snp identifier 
+#     Genetic distance (morgans) 
+#     Base-pair position (bp units)
+# Genetic distance can be specified in centimorgans with the --cm flag. 
+# Alternatively, you can use a MAP file with the genetic distance 
+# excluded by adding the flag --map3
+# -----------------------------------------------------------------------------
 
   geno.mono2PED = function(monodata,
                       FamilyID = NULL,
@@ -528,6 +540,7 @@ geno.QC.freq = function(genodata){                 # Major genotype frequency
                          stringsAsFactors = FALSE
                          )
   }
+
   geno.mono2PED.lite = function(monodata,
                                 IndID,
                                 Sex    = 1,
@@ -548,7 +561,7 @@ geno.QC.freq = function(genodata){                 # Major genotype frequency
 
 #- 9 --------------------------------------------------------------------------
 # Updated Apr 20, 2015 19:53
-# Function:    geno.biAL2rrb(monodata,FamilyID,IndID,PID,MID,Sex,Pheno)
+# Function:    geno.biAL2rrb(monodata,map)
 # Description: Create PED files
 #------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------

@@ -109,7 +109,7 @@
 #------------------------------------------------------------------------------
 Stat.qvalue = function(p.value){
   ## check p data
-  if (min(p.value) < 0 || max(p.value) > 1) {
+  if (min(p.value,na.rm = T) < 0 || max(p.value,na.rm = T) > 1) {
     stop("p-values should be in the range of [0,1]")
   }
   m = length(p.value)
