@@ -89,11 +89,14 @@ strsplit.mat = function(vec.char,sep=" "){
 #------------------------------------------------------------------------------
 blank.remover = function(vec.char){
     blank.rm.ele = function(char){
+        blank_found = FALSE
         n = nchar(char)
         while(substr(char,n,n) == " "){
+            blank_found = TRUE
             char = substr(char,1,(n-1))
             n = nchar(char)
         }
+        if (blank_found) cat("Blank found!")
         char
     }
     res.char = vec.char
