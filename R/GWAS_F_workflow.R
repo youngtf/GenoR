@@ -96,11 +96,12 @@ blank.remover = function(vec.char){
             char = substr(char,1,(n-1))
             n = nchar(char)
         }
-        if (blank_found) cat("Blank found!")
+        if (blank_found) cat("Blank found! \n")
         char
     }
     res.char = vec.char
     for (i in 1:length(vec.char)){
+      if (!is.na(res.char[i]))
         res.char[i] = blank.rm.ele(vec.char[i])
     } 
     res.char

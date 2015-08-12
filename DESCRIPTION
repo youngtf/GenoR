@@ -1,7 +1,7 @@
 Package: gwasYT
 Type: Package
 Title: A (personal) package with functions for GWAS
-Version: 0.2.6
+Version: 0.2.7
 Date: 2015-03-13
 Author: Tianfu Yang (tianfu@ualberta.ca)
 Maintainer: Tianfu Yang <tianfu@ualberta.ca>
