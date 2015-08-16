@@ -353,11 +353,12 @@ geno.monoAL2Num = function(monoAlle_AB
 
 #- 5 --------------------------------------------------------------------------
 # Function:    AB2Num(genodata)
-# Description: transform the coding from AA/AB/BB tp -1/0/1
+# Description: transform the coding from AA/AB/BB to -1/0/1
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Mar 13, 2015 14:32
-# 1 Don't use it until it can handle missing data - check!
+# 1 Don't use it until it can handle missing data 
+#   - check! It can handle missing data now.
 #------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # Unit test 
@@ -419,17 +420,22 @@ geno.Num2AB = function(genodata,
   }
   genodata
 }
+
 #- 6 --------------------------------------------------------------------------
 # Function:    geno.QC(genodata)
 # Description: Quality control for genotype data
 #------------------------------------------------------------------------------
-geno.QC.Missing = function(genodata){
+geno.QC.Missing = function(genodata,na_string = NULL){
     nind = nrow(genodata)
-    rate.missing = colSums(is.na(genodata)) / nind
-    rate.missing
+    if (!is.null(na_string)){
+      rate.missing = colSums((genodata == na_string)) / nind
+    } else {
+      rate.missing = colSums(is.na(genodata)) / nind
+    }
+    return(rate.missing)
 }
 
-geno.QC.freq = function(genodata){                 # Major genotype frequency
+geno.QC.freq = function(genodata,code=c(1,0,-1)){                 # Major genotype frequency
   # make a matrix, 1 for 1/0/-1 ,and 0 for NA or any other value
   mat.geno = (genodata == 1) + (genodata == 0) + (genodata == -1)
   # number of valid genotypes
