@@ -423,21 +423,6 @@ geno.Num2AB = function(genodata,
 # Function:    geno.QC(genodata)
 # Description: Quality control for genotype data
 #------------------------------------------------------------------------------
-geno.QC = function(genodata){
-
-  # make a matrix, 1 for 1/0/-1 ,and 0 for NA or any other value
-  mat.geno = (genodata == 1) + (genodata == 0) + (genodata == -1)
-  # number of valid genotypes
-  ngeno = colSums(mat.geno,na.rm=T) 
-
-  EnAA_AB_BB = cbind((AAF^2) * nValid 
-                      ,(AAF * BAF * 2) * nValid
-                      ,(BAF^2) * nValid
-                    )
-  res = colSums(((nAA_AB_BB - EnAA_AB_BB)^2) / EnAA_AB_BB)
-}
-
-
 geno.QC.Missing = function(genodata){
     nind = nrow(genodata)
     rate.missing = colSums(is.na(genodata)) / nind
