@@ -26,6 +26,11 @@
 # Function:    sv(data,rows=1:3)
 # Description: An alternative of head(), with column numbers
 #------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Aug 16, 2015 16:32
+# By using R/dplyr, one can avoid using the index of columns in data.frames.
+# The column names are better identifier as they are more meaningful
+# -----------------------------------------------------------------------------
 sv = function(data, rows=1:3){
     ncol.d = ncol(data)
     dataToPrint = rbind(colnames(data),as.matrix(data[rows,]))
@@ -38,6 +43,7 @@ sv = function(data, rows=1:3){
 # Function:    clc.func()
 # Description: clean all functions in present environment
 #------------------------------------------------------------------------------
+
 clc.func=function(){
     ls.objtype = function(){
         ls.obj = ls(envir = globalenv())
