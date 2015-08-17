@@ -169,7 +169,7 @@ geno.biAL2monoAL = function(genodata
   ## check the allele number (should be biploid)
     if (any(n.allele > 2)){
     idx.innormal = which(n.allele > 2)
-    warning("more than 2 possible alleles: ",idx.innormal,)
+    warning("more than 2 possible alleles: ",idx.innormal)
   }
   ## result: allele list
     res.data$names.base = allele.list
@@ -435,32 +435,33 @@ geno.QC.Missing = function(genodata,na_string = NULL){
     return(rate.missing)
 }
 
-geno.QC.freq = function(genodata,code=c(1,0,-1)){                 # Major genotype frequency
+geno.QC.freq = function(genodata,code=c(1,0,-1)){               
   # make a matrix, 1 for 1/0/-1 ,and 0 for NA or any other value
-  mat.geno = (genodata == 1) + (genodata == 0) + (genodata == -1)
+  mat.geno = genodata %in% code
+  dim(mat.geno) = dim(genodata)
   # number of valid genotypes
   ngeno = colSums(mat.geno,na.rm=T) 
-  #------------------------------------------------------------------------------
-  # Mar 17, 2015 11:02
-  # 1 when ngeno == 0 the MAF may be not valid (which may be removed in "missing")
-  #------------------------------------------------------------------------------
-  mat.alle.A   = (genodata == 1) * 2 + (genodata == 0)            # n.allele A
+  ngeno[ngeno == 0] = NA
+  # AAF
+  mat.alle.A   = (genodata == code[1]) * 2 + (genodata == code[2])            # n.allele A
   freq.alle.A  = colSums(mat.alle.A,na.rm=T) / (2 * ngeno)
+  # BAF
   freq.alle.B  = 1 - freq.alle.A
   MAF = pmin(freq.alle.A,freq.alle.B)
 
   freq.alle.AA  = colSums(genodata == 1, na.rm=T)
   freq.alle.AB  = colSums(genodata == 0, na.rm=T)
   freq.alle.BB  = colSums(genodata == -1,na.rm=T)
+  
   MGF = pmax(freq.alle.AA,freq.alle.AB,freq.alle.BB)
   
   res.freq = data.frame(ngeno  = ngeno,
                         AAF    = freq.alle.A,
                         BAF    = freq.alle.B,
                         MAF    = MAF,
-                        FreqAA = freq.alle.AA,
-                        FreqAB = freq.alle.AB,
-                        FreqBB = freq.alle.BB,
+                        NumAA  = freq.alle.AA,
+                        NumAB  = freq.alle.AB,
+                        NumBB  = freq.alle.BB,
                         MGF    = MGF,
                         row.names        = colnames(genodata),
                         stringsAsFactors = FALSE
@@ -567,3 +568,14 @@ geno.QC.freq = function(genodata,code=c(1,0,-1)){                 # Major genoty
 #   Including all phenotypes and fixed effects (how about covariate?)
 # -----------------------------------------------------------------------------
   
+
+# -----------------------------------------------------------------------------
+# Analysis Block
+# Type:              Functions
+# Descriptions:      
+# Last Update:       Aug 16, 2015
+# -----------------------------------------------------------------------------
+check_bia_data = function(genodata){
+    genotypes = unique(genotypes,nmax = 4)
+    genotypes 
+}
