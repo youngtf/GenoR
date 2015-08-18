@@ -567,15 +567,3 @@ geno.QC.freq = function(genodata,code=c(1,0,-1)){
 #   Col 1 ID.Ind
 #   Including all phenotypes and fixed effects (how about covariate?)
 # -----------------------------------------------------------------------------
-  
-
-# -----------------------------------------------------------------------------
-# Analysis Block
-# Type:              Functions
-# Descriptions:      
-# Last Update:       Aug 16, 2015
-# -----------------------------------------------------------------------------
-check_bia_data = function(genodata){
-    genotypes = unique(genotypes,nmax = 4)
-    genotypes 
-}
