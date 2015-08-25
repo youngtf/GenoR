@@ -7,21 +7,21 @@
 # Contents:
 # =============================================================================
 #
-#    ______     
-#   | "TG" |  <-------------------------
-#   |______|  ------------------------  | 
-#      | ^                         <5>| | <5>
-#  <1> | | <2>                        | |
-#      v |                            | v
+#    ______        ______ 
+#   | "TG" |      | "AB" |--------------
+#   |______|      |______|------------  | 
+#      | ^            ^            <5>| | <5>
+#  <1> | | <2>        |<8>            | |
+#      v |            |               | v
 #    ______        ______           ______        __         __________ 
 #   |"T""G"| ---> |"0""1"| ------> |-1/0/1| ---> |QC| ----> |Imputation| 
 #   |______| <3>  |______|   <4>   |______| <6>  |__|  <7>  |__________|
-#      |              |                                          |
-#      |<8>           |<8>                                       |
-#      v              v                                          v
-#    ______        ______                                    __________
-#   | PED  |      | PED  |                                  |  Gensel  |
-#   |______|      |______|                                  |__________|
+#      |                                                         |
+#      |<8>                                                      |
+#      v                                                         v
+#    ______                                                  __________
+#   | PED  |                                                |  Gensel  |
+#   |______|                                                |__________|
 #
 # =============================================================================
 # 1                                                       Updated (MAR10,2015)
@@ -58,7 +58,8 @@
 # Descriptions:      To-do List
 # To-do              1 construction of AB matrix
 #                    2 unit tests with "CC/TT"
-#                    3 comments for PED and QC
+#                    3 comments for PED               CHECK!
+#                    4 re-write QC function
 # Last Update:       Aug 25, 2015
 # -----------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -555,12 +556,24 @@ geno.QC.freq = function(genodata,code=c(1,0,-1)){
       return(genodata + mat_mean)
   }
 
-#- 8 --------------------------------------------------------------------------
-# Updated Feb 18, 2015 16:12
-# Function:    geno.mono2PED     (monodata,FamilyID,IndID,PID,MID,Sex,Pheno)
-# Function:    geno.mono2PED.lite(monodata,         IndID,        Sex,Pheno)
-# Description: Create PED files
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# UPDATED Aug 25, 2015 5:28 PM
+# FUNCTION:     geno.mono2PED(monodata,IndID,lite,FamilyID,PID,MID,Sex,Pheno)
+#' @title       Create PED files
+#' @param       monodata A monoAL object
+#' @param       IndID    A vector of Individual ID
+#' @param       lite     If using a lite version of PED file 
+#' @param       FamilyID A vector of family ID
+#' @param       PID      A vector of paternal ID
+#' @param       MID      A vector of maternal ID
+#' @param       Sex      A vector of individual sex
+#' @param       Pheno    A vector of phenotypic value
+#' @return      A data frame that can be written as a PED file
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function does some simple tests and combine available data
+#' @examples    
+# -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # Jul 10, 2015 19:37
 # By default, each line of the MAP file describes a single marker and must 
@@ -575,57 +588,49 @@ geno.QC.freq = function(genodata,code=c(1,0,-1)){
 # -----------------------------------------------------------------------------
 
   geno.mono2PED = function(monodata,
-                      FamilyID = NULL,
-                      IndID    = NULL,
-                      PID      = NULL,
-                      MID      = NULL,
-                      Sex      = NULL,
-                      Pheno    = NULL
-                      ){
+                           IndID,
+                           lite     = T
+                           FamilyID = NULL,
+                           PID      = NULL,
+                           MID      = NULL,
+                           Sex      = NULL,
+                           Pheno    = NULL
+                           ){
     # check the animal id
-    if (any(IndID != monodata$names.ind)) stop("wrong ID!")
-    Geno = matrix("",monodata$dim[1],monodata$dim[2]*2)
-    Geno[,c(TRUE,FALSE)] = monodata$Allele_1
-    Geno[,c(FALSE,TRUE)] = monodata$Allele_2
-    
-    if (is.null(FamilyID)) FamilyID = paste0("Family_",seq(nind))
-    if (is.null(PID))      PID      = rep(0,nind)
-    if (is.null(MID))      MID      = rep(0,nind)
-    if (is.null(Sex))      Sex      = rep(1,nind)
-    if (is.null(Pheno))    Pheno    = rep(1,nind)
-    
-    if (is.null(IndID)){
-      IndID.Raw = rownames(monodata)[1:nind]
-      len.names = nchar(IndID.Raw)   
-      IndID = substr(IndID.Raw,1,(len.names-2))
+    if (any(IndID != monodata$names.ind)){ 
+      stop("wrong ID!")
     }
-    res.PED = data.frame(FamilyID = FamilyID,
-                         IndID    = IndID,
-                         PID      = PID,
-                         MID      = MID,
-                         Sex      = Sex,
-                         Pheno    = Pheno,
-                         Geno     = Geno,
-                         stringsAsFactors = FALSE
-                         )
-  }
-
-  geno.mono2PED.lite = function(monodata,
-                                IndID,
-                                Sex    = 1,
-                                Pheno  = 1
-                                ){
-    # check the animal id
-    if (any(IndID != monodata$names.ind)) stop("wrong ID!")
+    # Geno data
     Geno = matrix("",monodata$dim[1],monodata$dim[2]*2)
     Geno[,c(TRUE,FALSE)] = monodata$Allele_1
     Geno[,c(FALSE,TRUE)] = monodata$Allele_2
-    res.PED = data.frame(IndID    = IndID,
-                         Sex      = Sex,
-                         Pheno    = Pheno,
-                         Geno     = Geno,
-                         stringsAsFactors = FALSE
-    )
+    
+    if (lite){
+      # result
+      res.PED = data.frame(IndID    = IndID,
+                           Sex      = Sex,
+                           Pheno    = Pheno,
+                           Geno     = Geno,
+                           stringsAsFactors = FALSE
+    } else {
+      # FAKE info
+      if (is.null(FamilyID)) FamilyID = paste0("Family_",seq(nind))
+      if (is.null(PID))      PID      = rep(0,nind)
+      if (is.null(MID))      MID      = rep(0,nind)
+      if (is.null(Sex))      Sex      = rep(1,nind)
+      if (is.null(Pheno))    Pheno    = rep(1,nind)
+      # result
+      res.PED = data.frame(FamilyID = FamilyID,
+                           IndID    = IndID,
+                           PID      = PID,
+                           MID      = MID,
+                           Sex      = Sex,
+                           Pheno    = Pheno,
+                           Geno     = Geno,
+                           stringsAsFactors = FALSE
+                           )
+      }
+    return(res.PED)
   }
 
 #- 9 --------------------------------------------------------------------------
