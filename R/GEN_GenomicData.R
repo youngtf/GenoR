@@ -3,7 +3,7 @@
 # Type:              Functions
 # Subtype/Project:   GenoCleaning
 # Descripetions:     functions used to clean the genotype data
-# Last Update:       2014-05-20
+# Last Update:       Aug 25, 2015 2:52 PM
 # Contents:
 # =============================================================================
 #
@@ -53,7 +53,14 @@
 #   Function:    geno.biAL2rrb(genodata)
 #   Description: Create geno and pheno files for R/rrBLUP
 #------------------------------------------------------------------------------
-
+# -----------------------------------------------------------------------------
+# Notes
+# Descriptions:      To-do List
+# To-do              1 construction of AB matrix
+#                    2 unit tests with "CC/TT"
+#                    3 comments for PED and QC
+# Last Update:       Aug 25, 2015
+# -----------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Feb 16, 2015 14:12
 # monoAlle: A class for the mono-allelic genotypic data
@@ -66,54 +73,68 @@
 #  - Allele_1   : matrix with code A/B
 #  - Allele_2   : matrix with code A/B
 #------------------------------------------------------------------------------
-#- 1 --------------------------------------------------------------------------
-# Updated Feb 18, 2015 16:12
-# Function:    geno.biAL2monoAL(genodata,na.geno,na.output)
-# Description: divide bi-allelic genotype data into mono-allelic
-# input:   genodata: n(nind) x m(nmar)
-# ouput:   A LIST (see unit test)
-#------------------------------------------------------------------------------
-### Unit test -----------------------------------------------------------------
-# genodata = rbind(c("AA","AB","--")
-#                 ,c("AA","--","BB")
-#                 ,c("AB","AB","AB"))
-# monoAlle = geno.biAL2monoAL(genodata)
-# monoAlle
-#
-# $dim
-# Row Col 
-# 3   3 
-# 
-# $names.ind
-# [1] "R1" "R2" "R3"        # auto naming
-# 
-# $names.mar
-# [1] "C1" "C2" "C3"        # auto naming
-# 
-# $names.base
-#   $names.base$C1
-#   [1] "A" "B"
-# 
-#   $names.base$C2
-#   [1] "A" "B"
-# 
-#   $names.base$C3
-#   [1] "B" "A"
-# 
-# 
-# $Allele_1
-# C1  C2  C3 
-# R1 "A" "A" "-"
-# R2 "A" "-" "B"
-# R3 "A" "A" "A"
-# 
-# $Allele_2
-# C1  C2  C3 
-# R1 "A" "B" "-"
-# R2 "A" "-" "B"
-# R3 "B" "B" "B"
-#
-#==============================================================================
+# -----------------------------------------------------------------------------
+# UPDATED Aug 25, 2015 2:56 PM
+# FUNCTION:     geno.biAL2monoAL()
+#' @title       divide bi-allelic genotype data into mono-allelic
+#' @param       genodata  A matrix of bi-allelic genotype (n(nind) x m(nmar))
+#' @param       na.geno   A 2-digit character for missing genotype in genedata
+#' @param       na.output A 2-digit character for out put data 
+#' @return      A monoAlle onject
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function divides bi-allelic genotype matrix into a
+#'              mono-allelic object
+#' @examples    
+#' genodata = rbind(c("AA","AB","--","CC")
+#'                 ,c("AA","--","BB","TT")
+#'                 ,c("AB","AB","AB","--"))
+#' (monoAlle = geno.biAL2monoAL(genodata))
+#' #
+#' # $dim
+#' # Row Col 
+#' # 3   4 
+#' # 
+#' # $names.ind
+#' # [1] "R1" "R2" "R3"
+#' # 
+#' # $names.mar
+#' # [1] "C1" "C2" "C3" "C4"
+#' # 
+#' # $names.base
+#' # $names.base$C1
+#' # [1] "A" "B"
+#' # 
+#' # $names.base$C2
+#' # [1] "A" "B"
+#' # 
+#' # $names.base$C3
+#' # [1] "B" "A"
+#' # 
+#' # $names.base$C4
+#' # [1] "C" "T"
+#' # 
+#' # 
+#' # $Allele_1
+#' # C1  C2  C3  C4 
+#' # R1 "A" "A" "0" "C"
+#' # R2 "A" "0" "B" "T"
+#' # R3 "A" "A" "A" "0"
+#' # 
+#' # $Allele_2
+#' # C1  C2  C3  C4 
+#' # R1 "A" "B" "0" "C"
+#' # R2 "A" "0" "B" "T"
+#' # R3 "B" "B" "B" "0"
+#' # 
+#' # attr(,"class")
+#' # [1] "monoAL"
+#' # Warning messages:
+#' # 1: In geno.biAL2monoAL(genodata) :
+#' #   no valid rownames for the input data, simple names will be given.
+#' # 2: In geno.biAL2monoAL(genodata) :
+#' #   no valid colnames for the input data, simple names will be given.
+# -----------------------------------------------------------------------------
 
 geno.biAL2monoAL = function(genodata
                             ,na.geno = "--"   # all genotype should be biallelic
@@ -174,30 +195,32 @@ geno.biAL2monoAL = function(genodata
   ## result: allele list
     res.data$names.base = allele.list
   ## Attributes
-    attributes(res.data)$class = "monoAL"
+    attributes(res.data)$class = c("monoAL",attributes(res.data)$class)
   ## Return  
     res.data
 }
-
-#- 2 --------------------------------------------------------------------------
-# Updated Mar 10, 2015 14:55
-# Function:    geno.monoAL2biAL(monoAlle,na.geno,na.output)
-# Description: combine the allele data into a Bi-allele data
-# input:   monoAL data
-# ouput:   A matrix (see unit test)
-#------------------------------------------------------------------------------
-### Unit test -----------------------------------------------------------------
-# genodata = rbind(c("AA","AB","--")
-#                 ,c("AA","--","BB")
-#                 ,c("AB","AB","AB"))
-# monoAlle = geno.biAL2monoAL(genodata)
-# geno.monoAL2biAL(monoAlle)
-#
-#     C1   C2   C3  
-# R1 "AA" "AB" "--"
-# R2 "AA" "--" "BB"
-# R3 "AB" "AB" "AB"
-### ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# UPDATED Aug 25, 2015 3:23 PM
+# FUNCTION:     geno.monoAL2biAL(monoAlle,na.geno,na.output)
+#' @title       combine the allele data into Bi-allele data
+#' @param       monoAlle  A monoAL object
+#' @param       na.geno   A 2-digit character for missing genotype in monoAlle
+#' @param       na.output A 2-digit character for out put data 
+#' @return      A matrix of bi-allelic genotype
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function combines the allele data into Bi-allele data
+#' @examples    
+#' genodata = rbind(c("AA","AB","--","CC")
+#'                 ,c("AA","--","BB","TT")
+#'                 ,c("AB","AB","AB","--"))
+#' monoAlle = geno.biAL2monoAL(genodata)
+#' geno.monoAL2biAL(monoAlle)
+#' #    C1   C2   C3   C4  
+#' # R1 "AA" "AB" "--" "CC"
+#' # R2 "AA" "--" "BB" "TT"
+#' # R3 "AB" "AB" "AB" "--"
+# -----------------------------------------------------------------------------
 
 geno.monoAL2biAL = function(monoAlle
                             ,na.geno   = "00" # widely used in Plink
@@ -216,60 +239,66 @@ geno.monoAL2biAL = function(monoAlle
     res.bia
 }
 
-#- 3 --------------------------------------------------------------------------
-# Updated Mar 10, 2015 15:57
-# Function:     geno.AGCT2AB(monoAlle,na.output)
-# Description:  Transform the coding of monoAL data to 1/2/0, which is the 
-#               index in the allele list / missing.
-#               the A/B code is only determined by the allele list in the 
+# -----------------------------------------------------------------------------
+# UPDATED Aug 25, 2015 3:27 PM
+# FUNCTION:     geno.AGCT2AB(monoAlle,na.output)
+#' @title       Transform the coding of monoAL data to 1/2/na.output (A/B/NA)
+#' @param       monoAlle  A monoAL object
+#' @param       na.output A integer for out put data 
+#' @return      A monoAL_AB object
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function transforms the coding of monoAL data to 
+#'              1/2/na.output, which is the index in the allele list / missing.
+#               The A/B code is only determined by the allele list in the 
 #               raw monoAL data (which is also kept in the result)
-# input:   monoAL data
-# ouput:   monoAL / monoAL_AB data
-#------------------------------------------------------------------------------
-### Unit test -----------------------------------------------------------------
-# genodata = rbind(c("AA","AB","--")
-#                 ,c("AA","--","BB")
-#                 ,c("AB","AB","AB"))
-# monoAlle = geno.biAL2monoAL(genodata)
-# geno.AGCT2AB(monoAlle)
-# 
-# $dim
-# Row Col 
-# 3   3 
-# 
-# $names.ind
-# [1] "R1" "R2" "R3"
-# 
-# $names.mar
-# [1] "C1" "C2" "C3"
-# 
-# $names.base
-# $names.base$C1
-# [1] "A" "B"
-# 
-# $names.base$C2
-# [1] "A" "B"
-# 
-# $names.base$C3
-# [1] "B" "A"
-# 
-# 
-# $Allele_1
-# [,1] [,2] [,3]
-# [1,]    1    1    0
-# [2,]    1    0    1
-# [3,]    1    1    2
-# 
-# $Allele_2
-# [,1] [,2] [,3]
-# [1,]    1    2    0
-# [2,]    1    0    1
-# [3,]    2    2    1
-# 
-# attr(,"class")
-# [1] "monoAL"    "monoAL_AB"
-### ---------------------------------------------------------------------------
-geno.AGCT2AB = function(monoAlle,na.output = 0 ){
+#' @examples    
+#' genodata = rbind(c("AA","AB","--","CC")
+#'                 ,c("AA","--","BB","TT")
+#'                 ,c("AB","AB","AB","--"))
+#' monoAlle = geno.biAL2monoAL(genodata)
+#' (monoAlle.AB = geno.AGCT2AB(monoAlle))
+#' # $dim
+#' # Row Col 
+#' # 3   4 
+#' # 
+#' # $names.ind
+#' # [1] "R1" "R2" "R3"
+#' # 
+#' # $names.mar
+#' # [1] "C1" "C2" "C3" "C4"
+#' # 
+#' # $names.base
+#' # $names.base$C1
+#' # [1] "A" "B"
+#' # 
+#' # $names.base$C2
+#' # [1] "A" "B"
+#' # 
+#' # $names.base$C3
+#' # [1] "B" "A"
+#' # 
+#' # $names.base$C4
+#' # [1] "C" "T"
+#' # 
+#' # 
+#' # $Allele_1
+#' # [,1] [,2] [,3] [,4]
+#' # [1,]    1    1    0    1
+#' # [2,]    1    0    1    2
+#' # [3,]    1    1    2    0
+#' # 
+#' # $Allele_2
+#' # [,1] [,2] [,3] [,4]
+#' # [1,]    1    2    0    1
+#' # [2,]    1    0    1    2
+#' # [3,]    2    2    1    0
+#' # 
+#' # attr(,"class")
+#' # [1] "monoAL_AB"
+# -----------------------------------------------------------------------------
+
+geno.AGCT2AB = function(monoAlle,na.output = 0){
   
   ## check the type of biallele data
     if (!("monoAL" %in% attributes(monoAlle)$class)){
@@ -299,33 +328,37 @@ geno.AGCT2AB = function(monoAlle,na.output = 0 ){
     res.list$Allele_1[is.na(res.list$Allele_1)] = na.output
     res.list$Allele_2[is.na(res.list$Allele_2)] = na.output
   ## Attributes
-    attributes(res.list)$class = c("monoAL"
-                                   ,"monoAL_AB" # implies its coding format
-                                  )
+    attributes(res.list)$class = c("monoAL","monoAL_AB",
+                                   attributes(res.list)$class)
   ## return the result
     res.list
 }
 
-#- 4 --------------------------------------------------------------------------
-# Updated Mar 10, 2015 16:27
-# Function:    geno.monoAL2Num(monoAlle_AB,na.geno,na.output)
-# Description: transform the coding from mono-allele to -1/0/1/-5
-# input:   monoAL_AB data
-# ouput:   A matrix (see unit test)
-#------------------------------------------------------------------------------
-### Unit test -----------------------------------------------------------------
-# genodata = rbind(c("AA","AB","--")
-#                 ,c("AA","--","BB")
-#                 ,c("AB","AB","AB"))
-# monoAlle    = geno.biAL2monoAL(genodata)
-# monoAlle_AB = geno.AGCT2AB(monoAlle)
-# geno.monoAL2Num(monoAlle_AB)
-# 
-#    C1 C2 C3
-# R1  1  0 -5
-# R2  1 -5  1
-# R3  0  0  0
-### ---------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# UPDATED Aug 25, 2015 3:48 PM
+# FUNCTION:     geno.monoAL2Num(monoAlle_AB,na.geno,na.output)
+#' @title       transform the coding from mono-allele to integer (-1/0/1/-5)
+#' @param       monoAlle_AB A monoAL_AB object
+#' @param       na.geno   An integer for missing genotype in monoAlle
+#' @param       na.output An integer for out put data 
+#' @return      A matrix of integer
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function transforms the coding from mono-allele to 
+#'              integer (-1/0/1/-5)
+#' @examples    
+#' genodata = rbind(c("AA","AB","--","CC")
+#'                 ,c("AA","--","BB","TT")
+#'                 ,c("AB","AB","AB","--"))
+#' monoAlle = geno.biAL2monoAL(genodata)
+#' monoAlle.AB = geno.AGCT2AB(monoAlle)
+#' (mat.int = geno.monoAL2Num(monoAlle.AB))
+#' #    C1 C2 C3 C4
+#' # R1  1  0 -5  1
+#' # R2  1 -5  1 -1
+#' # R3  0  0  0 -5
+# -----------------------------------------------------------------------------
+
 geno.monoAL2Num = function(monoAlle_AB
                            ,na.geno   = 0
                            ,na.output = -5
@@ -351,74 +384,92 @@ geno.monoAL2Num = function(monoAlle_AB
     res.num
 }
 
-#- 5 --------------------------------------------------------------------------
-# Function:    AB2Num(genodata)
-# Description: transform the coding from AA/AB/BB to -1/0/1
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-# Mar 13, 2015 14:32
-# 1 Don't use it until it can handle missing data 
-#   - check! It can handle missing data now.
-#------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-# Unit test 
-# genodata = rbind(c("AA","AB","--")
-#                 ,c("AA","--","BB")
-#                 ,c("AB","AB","AB"))
-# geno.AB2Num(genodata)
-# #      [,1] [,2] [,3]
-# # [1,]    1    0    0
-# # [2,]    1    0   -1
-# # [3,]    0    0    0
-# geno.AB2Num(genodata,"--")
-# #      [,1] [,2] [,3]
-# # [1,]    1    0   NA
-# # [2,]    1   NA   -1
-# # [3,]    0    0    0
-# geno.Num2AB(geno.AB2Num(genodata,"--"))
-# #      [,1] [,2] [,3]
-# # [1,] "AA" "AB" NA  
-# # [2,] "AA" NA   "BB"
-# # [3,] "AB" "AB" "AB"
-# a = geno.AB2Num(genodata)
-# a[2,2] = -9
-# a
-# #      [,1] [,2] [,3]
-# # [1,]    1    0    0
-# # [2,]    1   -9   -1
-# # [3,]    0    0    0
-# geno.Num2AB(a,missing = -9)
-# #      [,1] [,2] [,3]
-# # [1,] "AA" "AB" "AB"
-# # [2,] "AA" NA   "BB"
-# # [3,] "AB" "AB" "AB"
+# UPDATED Aug 25, 2015 3:58 PM
+# FUNCTION:     AB2Num(genodata,missing = NULL)
+#' @rdname      geno.AB2Num
+#' @title       transform the coding between BB/AB/AA and -1/0/1
+#' @param       genodata  A matrix of bi-allelic genotype (n(nind) x m(nmar))
+#' @param       na.geno   A 2-digit character for missing genotype in monoAlle
+#' @return      A matrix of integer
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function transforms the coding from AA/AB/BB to -1/0/1
+#' @examples    
+#' genodata = rbind(c("AA","AB","--","CC")
+#'                 ,c("AA","--","BB","TT")
+#'                 ,c("AB","AB","AB","--"))
+#' (mat.AB2Num = geno.AB2Num(genodata,"--")) # column 4 is WRONG!
+#' #      [,1] [,2] [,3] [,4]
+#' # [1,]    1    0   NA    0
+#' # [2,]    1   NA   -1    0
+#' # [3,]    0    0    0   NA
+#' 
 # -----------------------------------------------------------------------------
 
-geno.AB2Num = function(genodata,missing = NULL){
-  if ((!is.null(missing)) & (any(genodata == missing))){
-    genodata[(genodata == missing)] = NA    
+geno.AB2Num = function(genodata,na.geno = NULL){
+  if ((!is.null(na.geno)) & (any(genodata == na.geno))){
+    genodata[(genodata == na.geno)] = NA    
   }
   return((genodata == "AA") - (genodata == "BB"))
 }
-geno.Num2AB = function(genodata,
+
+# -----------------------------------------------------------------------------
+# UPDATED Aug 25, 2015 3:58 PM
+# FUNCTION:     geno.Num2AB(genodata.int,code=c(1,0,-1),na.geno = NULL)
+#' @rdname      geno.AB2Num
+#' @title       transform the coding between BB/AB/AA and -1/0/1
+#' @param       genodata.int  A matrix of integer for genotype
+#' @param       code          A vector of integer for AA/AB/BB
+#' @param       na.geno       A integer for missing genotype
+#' @return      A matrix of bi-allelic genotype
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function transforms the coding from -1/0/1 to BB/AB/AA
+#' @examples    
+#' genodata = rbind(c("AA","AB","--","CC")
+#'                 ,c("AA","--","BB","TT")
+#'                 ,c("AB","AB","AB","--"))
+#'                 
+#' (mat.AB2Num = geno.AB2Num(genodata,"--"))   # column 4 is WRONG!
+#' #      [,1] [,2] [,3] [,4]
+#' # [1,]    1    0   NA    0
+#' # [2,]    1   NA   -1    0
+#' # [3,]    0    0    0   NA
+#' 
+#' geno.Num2AB(geno.AB2Num(genodata,"--"))   # column 4 is WRONG!
+#' #      [,1] [,2] [,3] [,4]
+#' # [1,] "AA" "AB" NA   "AB"
+#' # [2,] "AA" NA   "BB" "AB"
+#' # [3,] "AB" "AB" "AB" NA  
+#' 
+#' a = geno.AB2Num(genodata,"--")
+#' a[is.na(a)] = -9
+#' geno.Num2AB(a,missing = -9)    # column 4 is WRONG!
+#' #      [,1] [,2] [,3] [,4]
+#' # [1,] "AA" "AB" NA   "AB"
+#' # [2,] "AA" NA   "BB" "AB"
+#' # [3,] "AB" "AB" "AB" NA  
+# -----------------------------------------------------------------------------
+geno.Num2AB = function(genodata.int,
                        code=c(1,0,-1),
                        missing = NULL){
-  if (missing %in% code){
+  if (!is.null(missing) && missing %in% code){
     stop("Invalid missing code (ambiguous code)")
   }
-  if ((!is.null(missing)) & (any(genodata == missing))){
-    genodata[(genodata == missing)] = NA
+  if ((!is.null(missing)) & (any(genodata.int == missing))){
+    genodata.int[(genodata.int == missing)] = NA
   }
-  if (any(genodata == code[3])){
-    genodata[(genodata == code[3])] = "BB"
+  if (any(genodata.int == code[3])){
+    genodata.int[(genodata.int == code[3])] = "BB"
   }
-  if (any(genodata == code[2])){
-    genodata[(genodata == code[2])] = "AB"
+  if (any(genodata.int == code[2])){
+    genodata.int[(genodata.int == code[2])] = "AB"
   }
-  if (any(genodata == code[1])){
-    genodata[(genodata == code[1])] = "AA"
+  if (any(genodata.int == code[1])){
+    genodata.int[(genodata.int == code[1])] = "AA"
   }
-  genodata
+  genodata.int
 }
 
 #- 6 --------------------------------------------------------------------------
@@ -443,7 +494,7 @@ geno.QC.freq = function(genodata,code=c(1,0,-1)){
   ngeno = colSums(mat.geno,na.rm=T) 
   ngeno[ngeno == 0] = NA
   # AAF
-  mat.alle.A   = (genodata == code[1]) * 2 + (genodata == code[2])            # n.allele A
+  mat.alle.A   = (genodata == code[1]) * 2 + (genodata == code[2])            
   freq.alle.A  = colSums(mat.alle.A,na.rm=T) / (2 * ngeno)
   # BAF
   freq.alle.B  = 1 - freq.alle.A
@@ -467,17 +518,43 @@ geno.QC.freq = function(genodata,code=c(1,0,-1)){
                         stringsAsFactors = FALSE
                         )
 }
+# -----------------------------------------------------------------------------
+# UPDATED Aug 25, 2015 3:19 PM
+# FUNCTION:     geno.impu.ave(genodata)
+#' @title       Impute the missing cells with average
+#' @param       genodata A numeric matrix of genotype (missing coded as NA)
+#' @return      A numeric matrix of genotype
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function imputes missing value in genotype data using
+#'              the average value of that column. This method can only be
+#'              used for genotype data coded as integer (-1/0/1 or 0/1/2 or 
+#'              -10/0/10). It is usually used in regression methods 
+#' @examples   
+#' genodata = rbind(c("AA","AB","--","CC")
+#'                 ,c("AA","--","BB","TT")
+#'                 ,c("AB","AB","AB","--"))
+#'                 
+#' (mat.AB2Num = geno.AB2Num(genodata,"--"))
+#' #      [,1] [,2] [,3] [,4]
+#' # [1,]    1    0   NA    0
+#' # [2,]    1   NA   -1    0
+#' # [3,]    0    0    0   NA
+#' geno.impu.ave(mat.AB2Num[,1:3])   # column 4 is WRONG!
+#' #      [,1] [,2] [,3]
+#' # [1,]    1    0 -0.5
+#' # [2,]    1    0 -1.0
+#' # [3,]    0    0  0.0
+# -----------------------------------------------------------------------------
 
-#- 7 --------------------------------------------------------------------------
-# Function:    geno.impu.ave(genodata)
-# Description: Impute the missing cells with average
-#------------------------------------------------------------------------------
   geno.impu.ave = function(genodata){
-      pop_mean = colMeans(genodata,na.rm=T)
-      mat_mean = (is.na(genodata)) * repmat(pop_mean,nrow(genodata),1)
+      pop_mean = matrix(colMeans(genodata,na.rm=T),nrow = 1)
+      pop_mean.mat = matrix(1,nrow(genodata),1) %*% pop_mean
+      mat_mean = (is.na(genodata)) * pop_mean.mat
       genodata[is.na(genodata)] = 0
-      genodata + mat_mean
+      return(genodata + mat_mean)
   }
+
 #- 8 --------------------------------------------------------------------------
 # Updated Feb 18, 2015 16:12
 # Function:    geno.mono2PED     (monodata,FamilyID,IndID,PID,MID,Sex,Pheno)
