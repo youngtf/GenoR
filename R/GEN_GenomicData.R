@@ -3,54 +3,52 @@
 # Type:              Functions
 # Subtype/Project:   GenoCleaning
 # Descripetions:     functions used to clean the genotype data
-# Last Update:       Aug 25, 2015 2:52 PM
+# Last Update:       Aug 26, 2015 1:08 PM
 # Contents:
-# =============================================================================
+#
 #    ______        ______ 
 #   | "TG" |      | "AB" |--------------
-#   |______|      |______|------------  | 
-#      | ^            ^            <5>| | <5>
-#  <1> | | <2>        |<8>            | |
+#   |______|      |______|<-----------  | 
+#      | ^            ^            <6>| | <5>
+#  <1> | | <2>        |<2>            | |
 #      v |            |               | v
 #    ______        ______           ______        __         __________ 
 #   |"T""G"| ---> |"A""B"| ------> |-1/0/1| ---> |QC| ----> |Imputation| 
-#   |______| <3>  |______|   <4>   |______| <6>  |__|  <7>  |__________|
+#   |______| <3>  |______|   <4>   |______| <7>  |__|  <8>  |__________|
 #      |                                                         |
-#      |<8>                                                      |
+#      |<9>                                                      |
 #      v                                                         v
 #    ______                                                  __________
 #   | PED  |                                                |  Gensel  |
 #   |______|                                                |__________|
-#
-# =============================================================================
-# 1                                                       Updated (MAR10,2015)
-#   Function:    geno.biAL2monoAL(genodata,na.geno,na.output)
-#   Description: divide bi-allelic genotype data into a mono-allelic one
-# 2                                                       Updated (MAR10,2015)
-#   Function:    geno.monoAL2biAL(monoAlle,na.geno,na.output)
-#   Description: combine the allele data into a Bi-allele data
-# 3                                                       Updated (MAR10,2015)
-#   Function:    geno.AGCT2AB(monoAlle,na.output)
-#   Description: Transform the coding of monoAL data to 1/2, which is the 
-#                index in the allele list.
-# 4                                                       Updated (MAR10,2015)
-#   Function:    geno.monoAL2Num(monoAlle_AB,na.geno,na.output)
-#   Description: transform the coding from mono-allele to -1/0/1/-5
+# 
+# 1                                                       
+# FUNCTION:     geno.biAL2monoAL()
+# @title        divide bi-allelic genotype data into mono-allelic
+# 2                                                 
+# FUNCTION:     geno.monoAL2biAL(monoAlle,na.geno,na.output)
+# @title        combine the allele data into Bi-allele data
+# 3                                                 
+# FUNCTION:     geno.AGCT2AB(monoAlle,na.output)
+# @title        Transform the coding of monoAL data to (A/B/NA).output
+# 4                                                 
+# FUNCTION:     geno.monoAL2Num(monoAlle_AB,na.geno,na.output)
+# @title        Transform the coding from mono-allele to integer (-1/0/1/-5)
 # 5
-#   Function:    geno.AB2Num(genodata)
-#   Description: transform the coding from AA/AB/BB tp -1/0/1
+# FUNCTION:     geno.AB2Num(genodata,missing = NULL)
+# @title        Transform the coding between BB/AB/AA and -1/0/1
 # 6
-#   Function:    geno.QC(genodata)
-#   Description: Quality control for genotype data
-# 7 
-#   Function:    geno.impu.ave(genodata)
-#   Description: Impute the missing cells with average
-# 8
-#   Function:    geno.mono2PED(genodata)
-#   Description: Create PED files
-# 9 
-#   Function:    geno.biAL2rrb(genodata)
-#   Description: Create geno and pheno files for R/rrBLUP
+# FUNCTION:     geno.Num2AB(genodata.int,code=c(1,0,-1),na.geno = NULL)
+# @title        Transform the coding between BB/AB/AA and -1/0/1
+# 7
+# FUNCTION:     geno.qc(genodata,code=c(1,0,-1),na.string = NULL)
+# @title        Quality control for genotype data
+# 8 
+# FUNCTION:     geno.impu.ave(genodata)
+# @title        Impute the missing cells with average
+# 9
+# FUNCTION:     geno.mono2PED(monodata,IndID,lite,FamilyID,PID,MID,Sex,Pheno)
+# @title        Create PED files
 #------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # Notes
@@ -58,9 +56,9 @@
 # To-do              1 construction of AB matrix          CHECK!      
 #                    2 unit tests with "CC/TT"            CHECK! 
 #                    3 comments for PED                   CHECK!
-#                    4 re-write QC function
+#                    4 re-write QC function               CHECK!
 #                    5 combine PedR and PED function
-# Last Update:       Aug 25, 2015
+# Last Update:       Aug 26, 2015
 # -----------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Feb 16, 2015 14:12
@@ -73,11 +71,11 @@
 #  - names.base : a 2-row matrix of the bases (A/B or A/G/C/T)
 #  - Allele_1   : matrix with code A/B
 #  - Allele_2   : matrix with code A/B
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # UPDATED Aug 25, 2015 2:56 PM
 # FUNCTION:     geno.biAL2monoAL()
-#' @title       divide bi-allelic genotype data into mono-allelic
+#' @title       Divide bi-allelic genotype data into mono-allelic
 #' @param       genodata  A matrix of bi-allelic genotype (n(nind) x m(nmar))
 #' @param       na.geno   A 2-digit character for missing genotype in genedata
 #' @param       na.output A 2-digit character for out put data 
@@ -338,7 +336,7 @@ geno.AGCT2AB = function(monoAlle,na.output = 0){
 }
 
 # -----------------------------------------------------------------------------
-# UPDATED Aug 25, 2015 3:48 PM
+# UPDATED Aug 26, 2015 1:08 PM
 # FUNCTION:     geno.monoAL2Num(monoAlle_AB,na.geno,na.output)
 #' @title       transform the coding from mono-allele to integer (-1/0/1/-5)
 #' @param       monoAlle_AB A monoAL_AB object
@@ -389,7 +387,7 @@ geno.monoAL2Num = function(monoAlle_AB
 
 # -----------------------------------------------------------------------------
 # UPDATED Aug 25, 2015 3:58 PM
-# FUNCTION:     AB2Num(genodata,missing = NULL)
+# FUNCTION:     geno.AB2Num(genodata,missing = NULL)
 #' @rdname      geno.AB2Num
 #' @title       transform the coding between BB/AB/AA and -1/0/1
 #' @param       genodata  A matrix of bi-allelic genotype (n(nind) x m(nmar))
@@ -479,53 +477,68 @@ geno.Num2AB = function(genodata.int,
   }
   genodata.int
 }
+# -----------------------------------------------------------------------------
+# UPDATED Aug 26, 2015 12:55 PM
+# FUNCTION:     geno.qc(genodata,code=c(1,0,-1),na.string = NULL)
+#' @title       Quality control for genotype data
+#' @param       genodata   A matrix of genotype
+#' @param       code       A vector of codes used in the genotype matrix
+#' @param       na.string  The character used to code the missing value.
+#' @return      A data.frame including basic statistics for SNPs.
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        Quality control for genotype data
+#' @examples  
+#' genodata_2 = rbind(c("AA","AB","--","AA","--")
+#'                   ,c("AA","--","BB","BB","--")
+#'                   ,c("AB","AB","AB","--","--"))
+#'                   
+#' geno.qc(genodata_2,c("AA","AB","BB"),"--") 
+#' #   ngeno nmiss     rmiss NumAA NumAB NumBB       AAF       BAF       MAF
+#' # 1     3     0 0.0000000     2     1     0 0.8333333 0.1666667 0.1666667
+#' # 2     2     1 0.3333333     0     2     0 0.5000000 0.5000000 0.5000000
+#' # 3     2     1 0.3333333     0     1     1 0.2500000 0.7500000 0.2500000
+#' # 4     2     1 0.3333333     1     0     1 0.5000000 0.5000000 0.5000000
+#' # 5     0     3 1.0000000     0     0     0 0.0000000 0.0000000 0.0000000
+# -----------------------------------------------------------------------------
 
-#- 6 --------------------------------------------------------------------------
-# Function:    geno.QC(genodata)
-# Description: Quality control for genotype data
-#------------------------------------------------------------------------------
-geno.QC.Missing = function(genodata,na_string = NULL){
-    nind = nrow(genodata)
-    if (!is.null(na_string)){
-      rate.missing = colSums((genodata == na_string)) / nind
-    } else {
-      rate.missing = colSums(is.na(genodata)) / nind
-    }
-    return(rate.missing)
-}
-
-geno.QC.freq = function(genodata,code=c(1,0,-1)){               
-  # make a matrix, 1 for 1/0/-1 ,and 0 for NA or any other value
-  mat.geno = genodata %in% code
-  dim(mat.geno) = dim(genodata)
-  # number of valid genotypes
-  ngeno = colSums(mat.geno,na.rm=T) 
-  ngeno[ngeno == 0] = NA
-  # AAF
-  mat.alle.A   = (genodata == code[1]) * 2 + (genodata == code[2])            
-  freq.alle.A  = colSums(mat.alle.A,na.rm=T) / (2 * ngeno)
-  # BAF
-  freq.alle.B  = 1 - freq.alle.A
-  MAF = pmin(freq.alle.A,freq.alle.B)
-
-  freq.alle.AA  = colSums(genodata == 1, na.rm=T)
-  freq.alle.AB  = colSums(genodata == 0, na.rm=T)
-  freq.alle.BB  = colSums(genodata == -1,na.rm=T)
-  
-  MGF = pmax(freq.alle.AA,freq.alle.AB,freq.alle.BB)
-  
-  res.freq = data.frame(ngeno  = ngeno,
-                        AAF    = freq.alle.A,
-                        BAF    = freq.alle.B,
-                        MAF    = MAF,
-                        NumAA  = freq.alle.AA,
-                        NumAB  = freq.alle.AB,
-                        NumBB  = freq.alle.BB,
-                        MGF    = MGF,
+geno.qc = function(genodata,code=c(1,0,-1),na.string = NULL){
+  # basic variables
+  nind = nrow(genodata)
+  # missing rate
+  if (!is.null(na.string)){
+    genodata[genodata == na.string] = NA
+  }
+  num.missing = colSums(is.na(genodata))
+  num.calling = nind - num.missing
+  rate.missing = num.missing / nind
+  # genotype frequency
+  num.AA = colSums(genodata == code[1], na.rm=T)
+  num.AB = colSums(genodata == code[2], na.rm=T)
+  num.BB = colSums(genodata == code[3], na.rm=T)
+  # allele frequency
+  num.A.allele = num.AA * 2 + num.AB
+  num.B.allele = num.BB * 2 + num.AB
+  num.calling.nozero = num.calling
+  num.calling.nozero[num.calling.nozero == 0] = 10^14
+  freq.A.allele = num.A.allele / (num.calling.nozero * 2)
+  freq.B.allele = num.B.allele / (num.calling.nozero * 2)
+  minor.allele.freq = pmin(freq.A.allele,freq.B.allele)
+  # output
+  res.freq = data.frame(ngeno  = num.calling,
+                        nmiss  = num.missing,
+                        rmiss  = rate.missing,
+                        NumAA  = num.AA,
+                        NumAB  = num.AB,
+                        NumBB  = num.BB,
+                        AAF    = freq.A.allele,
+                        BAF    = freq.B.allele,
+                        MAF    = minor.allele.freq,
                         row.names        = colnames(genodata),
-                        stringsAsFactors = FALSE
-                        )
+                        stringsAsFactors = FALSE)
+  return(res.freq)
 }
+
 # -----------------------------------------------------------------------------
 # UPDATED Aug 25, 2015 3:19 PM
 # FUNCTION:     geno.impu.ave(genodata)
@@ -642,11 +655,6 @@ geno.QC.freq = function(genodata,code=c(1,0,-1)){
     return(res.PED)
   }
 
-#- 9 --------------------------------------------------------------------------
-# Updated Apr 20, 2015 19:53
-# Function:    geno.biAL2rrb(monodata,map)
-# Description: Create PED files
-#------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # Apr 20, 2015 19:54        rrBLUP
 # GENO-DATA (with colnames c("marker","chrom","pos",ID.Ind))
