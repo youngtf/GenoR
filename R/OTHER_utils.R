@@ -3,28 +3,37 @@
 # Type:              Functions
 # Subtype/Project:   Workflow
 # Descriptions:      Functions about the workflow and efficiency of analysis
-# Last Update:       2014-05-19
+# Last Update:       Aug 26, 2015 2:59 PM
 # Contents:
 # 2
-#   Function:    clc.func()
-#   Description: clean all functions in present environment
+# FUNCTION:     clc.functions()
+# @title        Clean all (customed) functions in present environment
 # 3
-#   Function:    repmat(a,n,m)
-#   Description: replication of matrix (a) n x m times 
+# FUNCTION:     repmat(a,n,m)
+# @title        Replication of matrix (mat) n x m times 
 # 4
-#   Function:    strsplit.mat(vec.char,sep=" ")
-#   Description: instead of a list, this func try to return a matrix.
+# FUNCTION:     strsplit.mat(vec.char,sep=" ")
+# @title        A matrix version of strsplit()
 # 5
-#   Function:    blank.remover(vec.char)
-#   Description: to remove the blank in the end of characters
+# FUNCTION:     blank.remover(vec.char)
+# @title        Remove blanks in the end of characters
+# 6
+# FUNCTION:     ScaleMatrics(mat,scale.coef,MARGIN)
+# @title        Matrics scaling
 #------------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
-# Function:    clc.func()
-# Description: clean all (customed) functions in present environment
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# UPDATED Aug 26, 2015 2:47 PM
+# FUNCTION:     clc.functions()
+#' @title       clean all (customed) functions in present environment
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function looks for all functions defined in current 
+#'              session and cleaning them. It may be useful when a 
+#'              environment image is loaded and functions may be masked.
+# -----------------------------------------------------------------------------
 
-clc.func=function(){
+clc.functions=function(){
     ls.objtype = function(){
         ls.obj = ls(envir = globalenv())
         ls.type = ls.obj
@@ -36,45 +45,84 @@ clc.func=function(){
     rm(list=funcnames,envir=globalenv())
 }
 
-#------------------------------------------------------------------------------
-# Function:    repmat(a,n,m)
-# Description: replication of matrix (a) n x m times 
-#               
-#------------------------------------------------------------------------------
-repmat = function(a,nrow,ncol){
-  kronecker(matrix(1,nrow,ncol),a)
+# -----------------------------------------------------------------------------
+# UPDATED Aug 26, 2015 2:50 PM
+# FUNCTION:     repmat(a,n,m)
+#' @title       Replication of matrix (mat) n x m times 
+#' @param       mat A matrix
+#' @param       nrow Number of rows
+#' @param       ncol Number of cols
+#' @return      A matrix
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function is an application of kronecker multiplication.
+#' @examples    
+#' mat1 = matrix(1:4,2,2)
+#' repmat(mat1,2,3)
+#' #      [,1] [,2] [,3] [,4] [,5] [,6]
+#' # [1,]    1    3    1    3    1    3
+#' # [2,]    2    4    2    4    2    4
+#' # [3,]    1    3    1    3    1    3
+#' # [4,]    2    4    2    4    2    4
+# -----------------------------------------------------------------------------
+
+repmat = function(mat,nrow,ncol){
+  kronecker(matrix(1,nrow,ncol),mat)
 }
 
-#------------------------------------------------------------------------------
-# Function:    strsplit.mat(vec.char,sep=" ")
-# Description: instead of a list, this func try to return a matrix.
-#------------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
-# Unit test 
-# vec.char = c("QWERTYUIOP",
-#              "ASDFGHJKL:",
-#              "ZXCVBNM<>?")
-# strsplit.mat(vec.char, "")
-# 
-#      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
-# [1,] "Q"  "W"  "E"  "R"  "T"  "Y"  "U"  "I"  "O"  "P"  
-# [2,] "A"  "S"  "D"  "F"  "G"  "H"  "J"  "K"  "L"  ":"  
-# [3,] "Z"  "X"  "C"  "V"  "B"  "N"  "M"  "<"  ">"  "?"  
-
+# UPDATED Aug 26, 2015 2:54 PM
+# FUNCTION:     strsplit.mat(vec.char,sep=" ")
+#' @title       A matrix version of strsplit()
+#' @param       vec.char A vector of characters which will be split.
+#' @param       sep      The separator passed to strsplit()
+#' @return      A matrix
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        Instead of outputing a list, this func try to return a matrix.
+#' @examples    
+#' vec.char = c("QWERTYUIOP",
+#'              "ASDFGHJKL:",
+#'              "ZXCVBNM<>?")
+#' strsplit.mat(vec.char, "")
+#' 
+#' #      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+#' # [1,] "Q"  "W"  "E"  "R"  "T"  "Y"  "U"  "I"  "O"  "P"  
+#' # [2,] "A"  "S"  "D"  "F"  "G"  "H"  "J"  "K"  "L"  ":"  
+#' # [3,] "Z"  "X"  "C"  "V"  "B"  "N"  "M"  "<"  ">"  "?"  
 # -----------------------------------------------------------------------------
 
 strsplit.mat = function(vec.char,sep=" "){
     res.list = strsplit(vec.char,sep)
     len.char = unlist(lapply(res.list,length))
-    if (length(unique(len.char)) > 1) stop("not the same number of columns")
+    if (length(unique(len.char)) > 1) {
+      stop("not the same number of columns")
+    }
     res.vec.char = unlist(res.list)
     matrix(res.vec.char,ncol=unique(len.char), byrow=TRUE)
 }
 
-#------------------------------------------------------------------------------
-# Function:    blank.remover(vec.char)
-# Description: to remove the blank in the end of characters
-#------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# UPDATED Aug 26, 2015 2:59 PM
+# FUNCTION:     blank.remover(vec.char)
+#' @title       Remove blanks in the end of characters
+#' @param       vec.char
+#' @return      A vector of characters
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This function detects blanks in the end of characters and 
+#'              delete them
+#' @examples    
+#' vec.char = c("QWERTYUIOP   ",
+#'              "ASDFGHJKL:  ",
+#'              "ZXCVBNM<>? ")
+#' blank.remover(vec.char)
+#' # Blank found! 
+#' # Blank found! 
+#' # Blank found! 
+#' # [1] "QWERTYUIOP" "ASDFGHJKL:" "ZXCVBNM<>?"
+# -----------------------------------------------------------------------------
+
 blank.remover = function(vec.char){
     blank.rm.ele = function(char){
         blank_found = FALSE
@@ -96,39 +144,57 @@ blank.remover = function(vec.char){
 }
 
 # -----------------------------------------------------------------------------
-# Updated May 8, 2015 9:58 AM
-# Function:     rowScaling(InputMatrix,scaleFactor)
-#               colScaling(InputMatrix,scaleFactor)
-# Description:  Each vector in the matrix is scaled using the corresponding
-#               element in the scaleFactor
-#               Thanks for Dr. Zhiquan Wang's contribution!
-# input:        InputMatrix: a numeric matrix (m * n)
-#               scaleFactor: a numeric factor (m / n)
-# ouput:        a numeric matrix m * n
+# UPDATED Aug 26, 2015 3:22 PM
+# FUNCTION:     ScaleMatrics(mat,scale.coef,MARGIN)
+#' @title       Matrics scaling
+#' @param       mat        A numeric matrix (m * n)
+#' @param       scale.coef A numeric factor (m or n)
+#' @param       MARGIN     An integer:
+#'                         1 for row manipulation and 2 for column manipulation
+#' @return      An sparse numeric matrix m * n
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        Each vector in the matrix is scaled using the corresponding
+#'              element in the scale.coef.
+#'              Left multiplication manipulate the rows, while right 
+#'              multiplication manipulate the cols. This function uses diagonal 
+#'              sparse functions to multiply each row/column by a nonzero 
+#'              scalar (can be different across rows/columns)
+#'              Thanks for Dr. Zhiquan Wang's contribution.
+#' @examples 
+#' mat = matrix(1,3,3)
+#' ScaleMatrics(mat,c(2,3,5),1)
+#' # 3 x 3 Matrix of class "dgeMatrix"
+#' # [,1] [,2] [,3]
+#' # [1,]    2    2    2
+#' # [2,]    3    3    3
+#' # [3,]    5    5    5
+#' 
+#' ScaleMatrics(mat,c(2,3,5),2)
+#' # 3 x 3 Matrix of class "dgeMatrix"
+#' # [,1] [,2] [,3]
+#' # [1,]    2    3    5
+#' # [2,]    2    3    5
+#' # [3,]    2    3    5
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # May 8, 2015 10:09 AM
 # 1 May not be able to handle missing value 
 # -----------------------------------------------------------------------------
 
-rowScaling = function(InputMatrix,scaleFactor){
-  n1 = nrow(InputMatrix)
-  n2 = length(scaleFactor)
-  if (n1 != n2) {
+ScaleMatrics = function(mat,scale.coef,MARGIN){
+  m = nrow(mat)
+  n.coef = length(scale.coef)
+  if (m != n.coef) {
     stop("Wrong dimension of input matrices")
   }
-  scaleMatrix = sparseMatrix(i=seq(n2),j=seq(n2),x=scaleFactor)
-  res = scaleMatrix %*% InputMatrix
-  res
-}
-
-colScaling = function(InputMatrix,scaleFactor){
-  n1 = ncol(InputMatrix)
-  n2 = length(scaleFactor)
-  if (n1 != n2) {
-    stop("Wrong dimension of input matrices")
+  scale.matrix = sparseMatrix(i=seq(n.coef),j=seq(n.coef),x=scale.coef)
+  if (MARGIN == 1){
+    res = scale.matrix %*% mat
+  } else if (MARGIN == 2){
+    res = mat %*% scale.matrix
+  } else {
+    stop("Should not get here!")
   }
-  scaleMatrix = sparseMatrix(i=seq(n2),j=seq(n2),x=scaleFactor)
-  res = InputMatrix %*% scaleMatrix
-  res
+  return(res)
 }

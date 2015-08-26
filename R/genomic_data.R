@@ -416,10 +416,9 @@ geno.AB2Num = function(genodata,na.geno = NULL){
 # UPDATED Aug 25, 2015 3:58 PM
 # FUNCTION:     geno.Num2AB(genodata.int,code=c(1,0,-1),na.geno = NULL)
 #' @rdname      geno.AB2Num
-#' @title       transform the coding between BB/AB/AA and -1/0/1
 #' @param       genodata.int  A matrix of integer for genotype
 #' @param       code          A vector of integer for AA/AB/BB
-#' @param       na.geno       A integer for missing genotype
+#' @param       na.geno.int       A integer for missing genotype
 #' @return      A matrix of bi-allelic genotype
 # -----------------------------------------------------------------------------
 #' @export      
@@ -453,12 +452,12 @@ geno.AB2Num = function(genodata,na.geno = NULL){
 # -----------------------------------------------------------------------------
 geno.Num2AB = function(genodata.int,
                        code=c(1,0,-1),
-                       na.geno = NULL){
-  if (!is.null(na.geno) && na.geno %in% code){
+                       na.geno.int = NULL){
+  if (!is.null(na.geno.int) && na.geno.int %in% code){
     stop("Invalid missing code (ambiguous code)")
   }
-  if ((!is.null(na.geno)) & (any(genodata.int == na.geno))){
-    genodata.int[(genodata.int == na.geno)] = NA
+  if ((!is.null(na.geno.int)) & (any(genodata.int == na.geno.int))){
+    genodata.int[(genodata.int == na.geno.int)] = NA
   }
   if (any(genodata.int == code[3])){
     genodata.int[(genodata.int == code[3])] = "BB"
@@ -615,6 +614,7 @@ geno.qc = function(genodata,code=c(1,0,-1),na.string = NULL){
     if (any(IndID != monodata$names.ind)){ 
       stop("wrong ID!")
     }
+    
     # Geno data
     Geno = matrix("",monodata$dim[1],monodata$dim[2]*2)
     Geno[,c(TRUE,FALSE)] = monodata$Allele_1
@@ -629,6 +629,7 @@ geno.qc = function(genodata,code=c(1,0,-1),na.string = NULL){
                            stringsAsFactors = FALSE)
     } else {
       # FAKE info
+      nind = length(IndID)
       if (is.null(FamilyID)) FamilyID = paste0("Family_",seq(nind))
       if (is.null(PID))      PID      = rep(0,nind)
       if (is.null(MID))      MID      = rep(0,nind)
