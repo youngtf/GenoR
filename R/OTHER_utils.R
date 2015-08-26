@@ -21,7 +21,7 @@
 
 #------------------------------------------------------------------------------
 # Function:    clc.func()
-# Description: clean all functions in present environment
+# Description: clean all (customed) functions in present environment
 #------------------------------------------------------------------------------
 
 clc.func=function(){
@@ -41,7 +41,9 @@ clc.func=function(){
 # Description: replication of matrix (a) n x m times 
 #               
 #------------------------------------------------------------------------------
-repmat <- function(a,nrow,ncol) {kronecker(matrix(1,nrow,ncol),a)}
+repmat = function(a,nrow,ncol){
+  kronecker(matrix(1,nrow,ncol),a)
+}
 
 #------------------------------------------------------------------------------
 # Function:    strsplit.mat(vec.char,sep=" ")

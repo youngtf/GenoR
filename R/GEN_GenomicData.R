@@ -6,21 +6,15 @@
 # Last Update:       Aug 26, 2015 1:08 PM
 # Contents:
 #
-#    ______        ______ 
-#   | "TG" |      | "AB" |--------------
-#   |______|      |______|<-----------  | 
-#      | ^            ^            <6>| | <5>
-#  <1> | | <2>        |<2>            | |
-#      v |            |               | v
-#    ______        ______           ______        __         __________ 
-#   |"T""G"| ---> |"A""B"| ------> |-1/0/1| ---> |QC| ----> |Imputation| 
-#   |______| <3>  |______|   <4>   |______| <7>  |__|  <8>  |__________|
-#      |                                                         |
-#      |<9>                                                      |
-#      v                                                         v
-#    ______                                                  __________
-#   | PED  |                                                |  Gensel  |
-#   |______|                                                |__________|
+#                ______        ______  <5>   ______        __        _________ 
+#      RAW ===> | "TG" |      | "AB" | ---> |-1/0/1| ---> |QC| ---> | imputed |
+#               |______|      |______| <--- |______| <7>  |__| <8>  |_________|
+#                  |^            |^     <6>    ^                         |
+#              <1> || <2>    <1> ||<2>         |                         |
+#                  v|            v|            | <4>                     v
+#  ______   <9>  ______        ______          |                    __________     
+# | PED  | <--- |"T""G"| ---> |"A""B"| ---------                   | analysis |
+# |______|      |______| <3>  |______|                             |__________|
 # 
 # 1                                                       
 # FUNCTION:     geno.biAL2monoAL()
@@ -35,7 +29,7 @@
 # FUNCTION:     geno.monoAL2Num(monoAlle_AB,na.geno,na.output)
 # @title        Transform the coding from mono-allele to integer (-1/0/1/-5)
 # 5
-# FUNCTION:     geno.AB2Num(genodata,missing = NULL)
+# FUNCTION:     geno.AB2Num(genodata,na.geno = NULL)
 # @title        Transform the coding between BB/AB/AA and -1/0/1
 # 6
 # FUNCTION:     geno.Num2AB(genodata.int,code=c(1,0,-1),na.geno = NULL)
@@ -387,7 +381,7 @@ geno.monoAL2Num = function(monoAlle_AB
 
 # -----------------------------------------------------------------------------
 # UPDATED Aug 25, 2015 3:58 PM
-# FUNCTION:     geno.AB2Num(genodata,missing = NULL)
+# FUNCTION:     geno.AB2Num(genodata, na.geno = NULL)
 #' @rdname      geno.AB2Num
 #' @title       transform the coding between BB/AB/AA and -1/0/1
 #' @param       genodata  A matrix of bi-allelic genotype (n(nind) x m(nmar))
@@ -451,7 +445,7 @@ geno.AB2Num = function(genodata,na.geno = NULL){
 #' 
 #' a = geno.AB2Num(geno.AB,"--")
 #' a[is.na(a)] = -9
-#' geno.Num2AB(a,missing = -9)
+#' geno.Num2AB(a,na.geno = -9)
 #' # C1   C2   C3   C4  
 #' # R1 "AA" "AB" NA   "AA"
 #' # R2 "AA" NA   "AA" "BB"
@@ -459,12 +453,12 @@ geno.AB2Num = function(genodata,na.geno = NULL){
 # -----------------------------------------------------------------------------
 geno.Num2AB = function(genodata.int,
                        code=c(1,0,-1),
-                       missing = NULL){
-  if (!is.null(missing) && missing %in% code){
+                       na.geno = NULL){
+  if (!is.null(na.geno) && na.geno %in% code){
     stop("Invalid missing code (ambiguous code)")
   }
-  if ((!is.null(missing)) & (any(genodata.int == missing))){
-    genodata.int[(genodata.int == missing)] = NA
+  if ((!is.null(na.geno)) & (any(genodata.int == na.geno))){
+    genodata.int[(genodata.int == na.geno)] = NA
   }
   if (any(genodata.int == code[3])){
     genodata.int[(genodata.int == code[3])] = "BB"
@@ -594,7 +588,6 @@ geno.qc = function(genodata,code=c(1,0,-1),na.string = NULL){
 # -----------------------------------------------------------------------------
 #' @export      
 #' @note        This function does some simple tests and combine available data
-#' @examples    
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # Jul 10, 2015 19:37
