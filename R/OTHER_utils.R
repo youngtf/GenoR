@@ -5,9 +5,6 @@
 # Descriptions:      Functions about the workflow and efficiency of analysis
 # Last Update:       2014-05-19
 # Contents:
-# 1
-#   Function:    sv(data,rows=1:3)
-#   Description: An alternative of head(), with column numbers
 # 2
 #   Function:    clc.func()
 #   Description: clean all functions in present environment
@@ -21,23 +18,6 @@
 #   Function:    blank.remover(vec.char)
 #   Description: to remove the blank in the end of characters
 #------------------------------------------------------------------------------
-
-#------------------------------------------------------------------------------
-# Function:    sv(data,rows=1:3)
-# Description: An alternative of head(), with column numbers
-#------------------------------------------------------------------------------
-# -----------------------------------------------------------------------------
-# Aug 16, 2015 16:32
-# By using R/dplyr, one can avoid using the index of columns in data.frames.
-# The column names are better identifier as they are more meaningful
-# -----------------------------------------------------------------------------
-sv = function(data, rows=1:3){
-    ncol.d = ncol(data)
-    dataToPrint = rbind(colnames(data),as.matrix(data[rows,]))
-    rownames(dataToPrint)[1] = "COLNAME"
-    colnames(dataToPrint) = 1:ncol.d
-    print(dataToPrint,quote=FALSE)
-}
 
 #------------------------------------------------------------------------------
 # Function:    clc.func()

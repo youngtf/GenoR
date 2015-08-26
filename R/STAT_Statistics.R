@@ -6,6 +6,8 @@
 # Last Update:       Mar 12, 2015
 # Contents:
 # 1
+# Function:     Stat.qvalue(p.value)
+# Description:  calculate the q-value based on a set of p-value in MultiTest
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -83,11 +85,13 @@
 #------------------------------------------------------------------------------
 # Mar 12, 2015 12:24
 # Is it similar to match(p,sort(p))?
-#   In this expression the rank would be "higher" than qvalue.rnak()
+#   In this expression the rank would be "higher" than qvalue.rank()
 #   rank(p, ties.method = "max")  may be a better choice
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Unit test 
+# # The test here did not consider the situation when two P-val is equal
+# # All equal.
 #   for (i in 1: 10000){
 #     p = rbinom(100,50,0.45) / 50
 #     r1 = rank(p, ties.method = "max")
@@ -105,8 +109,7 @@
 #     }
 #   }
 #------------------------------------------------------------------------------   
-# All equal.
-#------------------------------------------------------------------------------
+
 Stat.qvalue = function(p.value){
   ## check p data
   if (min(p.value,na.rm = T) < 0 || max(p.value,na.rm = T) > 1) {
