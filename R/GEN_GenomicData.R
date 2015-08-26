@@ -6,7 +6,6 @@
 # Last Update:       Aug 25, 2015 2:52 PM
 # Contents:
 # =============================================================================
-#
 #    ______        ______ 
 #   | "TG" |      | "AB" |--------------
 #   |______|      |______|------------  | 
@@ -14,7 +13,7 @@
 #  <1> | | <2>        |<8>            | |
 #      v |            |               | v
 #    ______        ______           ______        __         __________ 
-#   |"T""G"| ---> |"0""1"| ------> |-1/0/1| ---> |QC| ----> |Imputation| 
+#   |"T""G"| ---> |"A""B"| ------> |-1/0/1| ---> |QC| ----> |Imputation| 
 #   |______| <3>  |______|   <4>   |______| <6>  |__|  <7>  |__________|
 #      |                                                         |
 #      |<8>                                                      |
@@ -56,10 +55,11 @@
 # -----------------------------------------------------------------------------
 # Notes
 # Descriptions:      To-do List
-# To-do              1 construction of AB matrix
-#                    2 unit tests with "CC/TT"
-#                    3 comments for PED               CHECK!
+# To-do              1 construction of AB matrix          CHECK!      
+#                    2 unit tests with "CC/TT"            CHECK! 
+#                    3 comments for PED                   CHECK!
 #                    4 re-write QC function
+#                    5 combine PedR and PED function
 # Last Update:       Aug 25, 2015
 # -----------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -243,14 +243,14 @@ geno.monoAL2biAL = function(monoAlle
 # -----------------------------------------------------------------------------
 # UPDATED Aug 25, 2015 3:27 PM
 # FUNCTION:     geno.AGCT2AB(monoAlle,na.output)
-#' @title       Transform the coding of monoAL data to 1/2/na.output (A/B/NA)
+#' @title       Transform the coding of monoAL data to (A/B/NA).output
 #' @param       monoAlle  A monoAL object
 #' @param       na.output A integer for out put data 
 #' @return      A monoAL_AB object
 # -----------------------------------------------------------------------------
 #' @export      
-#' @note        This function transforms the coding of monoAL data to 
-#'              1/2/na.output, which is the index in the allele list / missing.
+#' @note        This function transforms the coding of monoAL data to (A/B/NA) 
+#'              output, which is the index in the allele list / missing.
 #               The A/B code is only determined by the allele list in the 
 #               raw monoAL data (which is also kept in the result)
 #' @examples    
@@ -285,18 +285,18 @@ geno.monoAL2biAL = function(monoAlle
 #' # 
 #' # $Allele_1
 #' # [,1] [,2] [,3] [,4]
-#' # [1,]    1    1    0    1
-#' # [2,]    1    0    1    2
-#' # [3,]    1    1    2    0
+#' # [1,] "A"  "A"  "0"  "A" 
+#' # [2,] "A"  "0"  "A"  "B" 
+#' # [3,] "A"  "A"  "B"  "0" 
 #' # 
 #' # $Allele_2
 #' # [,1] [,2] [,3] [,4]
-#' # [1,]    1    2    0    1
-#' # [2,]    1    0    1    2
-#' # [3,]    2    2    1    0
+#' # [1,] "A"  "B"  "0"  "A" 
+#' # [2,] "A"  "0"  "A"  "B" 
+#' # [3,] "B"  "B"  "A"  "0" 
 #' # 
 #' # attr(,"class")
-#' # [1] "monoAL_AB"
+#' # [1] "monoAL"    "monoAL_AB"
 # -----------------------------------------------------------------------------
 
 geno.AGCT2AB = function(monoAlle,na.output = 0){
@@ -318,12 +318,14 @@ geno.AGCT2AB = function(monoAlle,na.output = 0){
     allele_List = monoAlle$names.base
   ## transfer
     res.list$Allele_1 = apply(t(seq(nmar)), 2
-                             ,function(x) match(monoAlle$Allele_1[,x]
-                                               ,allele_List[[x]])
+                             ,function(x) 
+                              c("A","B")[match(monoAlle$Allele_1[,x]
+                                        ,allele_List[[x]])]
                              )
     res.list$Allele_2 = apply(t(seq(nmar)), 2
-                             ,function(x) match(monoAlle$Allele_2[,x]
-                                               ,allele_List[[x]])
+                             ,function(x) 
+                              c("A","B")[match(monoAlle$Allele_2[,x]
+                                              ,allele_List[[x]])]
                              )
   ## All NA is missing
     res.list$Allele_1[is.na(res.list$Allele_1)] = na.output
@@ -400,11 +402,14 @@ geno.monoAL2Num = function(monoAlle_AB
 #' genodata = rbind(c("AA","AB","--","CC")
 #'                 ,c("AA","--","BB","TT")
 #'                 ,c("AB","AB","AB","--"))
-#' (mat.AB2Num = geno.AB2Num(genodata,"--")) # column 4 is WRONG!
-#' #      [,1] [,2] [,3] [,4]
-#' # [1,]    1    0   NA    0
-#' # [2,]    1   NA   -1    0
-#' # [3,]    0    0    0   NA
+#' monoAlle = geno.biAL2monoAL(genodata)
+#' monoAlle.AB = geno.AGCT2AB(monoAlle)
+#' geno.AB = geno.monoAL2biAL(monoAlle.AB)
+#' (mat.AB2Num = geno.AB2Num(geno.AB,"--")) 
+#' #    C1 C2 C3 C4
+#' # R1  1  0 NA  1
+#' # R2  1 NA  1 -1
+#' # R3  0  0  0 NA
 #' 
 # -----------------------------------------------------------------------------
 
@@ -431,26 +436,28 @@ geno.AB2Num = function(genodata,na.geno = NULL){
 #' genodata = rbind(c("AA","AB","--","CC")
 #'                 ,c("AA","--","BB","TT")
 #'                 ,c("AB","AB","AB","--"))
-#'                 
-#' (mat.AB2Num = geno.AB2Num(genodata,"--"))   # column 4 is WRONG!
-#' #      [,1] [,2] [,3] [,4]
-#' # [1,]    1    0   NA    0
-#' # [2,]    1   NA   -1    0
-#' # [3,]    0    0    0   NA
+#' monoAlle = geno.biAL2monoAL(genodata)
+#' monoAlle.AB = geno.AGCT2AB(monoAlle)
+#' geno.AB = geno.monoAL2biAL(monoAlle.AB)
+#' (mat.AB2Num = geno.AB2Num(geno.AB,"--"))
+#' #    C1 C2 C3 C4
+#' # R1  1  0 NA  1
+#' # R2  1 NA  1 -1
+#' # R3  0  0  0 NA
 #' 
-#' geno.Num2AB(geno.AB2Num(genodata,"--"))   # column 4 is WRONG!
-#' #      [,1] [,2] [,3] [,4]
-#' # [1,] "AA" "AB" NA   "AB"
-#' # [2,] "AA" NA   "BB" "AB"
-#' # [3,] "AB" "AB" "AB" NA  
+#' geno.Num2AB(geno.AB2Num(geno.AB,"--"))
+#' # C1   C2   C3   C4  
+#' # R1 "AA" "AB" NA   "AA"
+#' # R2 "AA" NA   "AA" "BB"
+#' # R3 "AB" "AB" "AB" NA 
 #' 
-#' a = geno.AB2Num(genodata,"--")
+#' a = geno.AB2Num(geno.AB,"--")
 #' a[is.na(a)] = -9
-#' geno.Num2AB(a,missing = -9)    # column 4 is WRONG!
-#' #      [,1] [,2] [,3] [,4]
-#' # [1,] "AA" "AB" NA   "AB"
-#' # [2,] "AA" NA   "BB" "AB"
-#' # [3,] "AB" "AB" "AB" NA  
+#' geno.Num2AB(a,missing = -9)
+#' # C1   C2   C3   C4  
+#' # R1 "AA" "AB" NA   "AA"
+#' # R2 "AA" NA   "AA" "BB"
+#' # R3 "AB" "AB" "AB" NA  
 # -----------------------------------------------------------------------------
 geno.Num2AB = function(genodata.int,
                        code=c(1,0,-1),
@@ -535,17 +542,19 @@ geno.QC.freq = function(genodata,code=c(1,0,-1)){
 #' genodata = rbind(c("AA","AB","--","CC")
 #'                 ,c("AA","--","BB","TT")
 #'                 ,c("AB","AB","AB","--"))
-#'                 
-#' (mat.AB2Num = geno.AB2Num(genodata,"--"))
-#' #      [,1] [,2] [,3] [,4]
-#' # [1,]    1    0   NA    0
-#' # [2,]    1   NA   -1    0
-#' # [3,]    0    0    0   NA
-#' geno.impu.ave(mat.AB2Num[,1:3])   # column 4 is WRONG!
-#' #      [,1] [,2] [,3]
-#' # [1,]    1    0 -0.5
-#' # [2,]    1    0 -1.0
-#' # [3,]    0    0  0.0
+#' monoAlle = geno.biAL2monoAL(genodata)
+#' monoAlle.AB = geno.AGCT2AB(monoAlle)
+#' geno.AB = geno.monoAL2biAL(monoAlle.AB)
+#' (mat.AB2Num = geno.AB2Num(geno.AB,"--"))
+#' # C1 C2 C3 C4
+#' # R1  1  0 NA  1
+#' # R2  1 NA  1 -1
+#' # R3  0  0  0 NA
+#' geno.impu.ave(mat.AB2Num)
+#' #    C1 C2  C3 C4
+#' # R1  1  0 0.5  1
+#' # R2  1  0 1.0 -1
+#' # R3  0  0 0.0  0
 # -----------------------------------------------------------------------------
 
   geno.impu.ave = function(genodata){
@@ -589,7 +598,7 @@ geno.QC.freq = function(genodata,code=c(1,0,-1)){
 
   geno.mono2PED = function(monodata,
                            IndID,
-                           lite     = T
+                           lite     = T,
                            FamilyID = NULL,
                            PID      = NULL,
                            MID      = NULL,
@@ -611,7 +620,7 @@ geno.QC.freq = function(genodata,code=c(1,0,-1)){
                            Sex      = Sex,
                            Pheno    = Pheno,
                            Geno     = Geno,
-                           stringsAsFactors = FALSE
+                           stringsAsFactors = FALSE)
     } else {
       # FAKE info
       if (is.null(FamilyID)) FamilyID = paste0("Family_",seq(nind))
