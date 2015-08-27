@@ -3,25 +3,37 @@
 # Type:              Functions
 # Subtype/Project:   Statistical analysis functions
 # Descripetions:     
-# Last Update:       Mar 12, 2015
+# Last Update:       Aug 27, 2015 12:14 PM
 # Contents:
 # 1
 # Function:     Stat.qvalue(p.value)
 # Description:  calculate the q-value based on a set of p-value in MultiTest
 #------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# UPDATED Aug 27, 2015 12:14 PM
+# FUNCTION:     Stat.qvalue(p.value)
+#' @title       calculate q-values based on a set of p-values in Multiple Tests
+#' @param       p.value The p-values obtained from multiple testing
+#' @param       \
+#' @param       \
+#' @param       \
+#' @param       \
+#' @param       \
+#' @return      \item{name a}{description} \
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        This is a revised version of the qvalue() function in 
+#'              R/rrBLUP::GWAS(). 
+#' @references  Estimating the False Discovery Rate using SAS (Paper 190-31)
+#' @examples    
+#' p = runif(1000)
+#' q2 = Stat.qvalue(p)
+# -----------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
-# Updated Mar 12, 2015 11:53
-# Function:     Stat.qvalue(p.value)
-# Description:  calculate the q-value based on a set of p-value in MultiTest
-# input:        p-value
-# ouput:        q-value
-# IMPORTANT: A revised version of the qvalue() function in R/rrBLUP 
-# REFERENCE: Estimating the False Discovery Rate using SAS (Paper 190-31)
-#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Unit test 
 # 
+# # The comparison with qvalue() in rrBLUP::GWAS()
 # qvalue <- function(p) {           ## copy from R/rrBLUP::GWAS
 #   smooth.df = 3
 #   if (min(p) < 0 || max(p) > 1) {
@@ -130,7 +142,7 @@ Stat.qvalue = function(p.value){
     stop("pi0 should be larger than 0")
   }
   
-  u = order(p.value)        ## the index of p-value, larger for larger value
+  u = order(p.value)      ## the index of p-value, greater for larger value
   v = rank(p.value, ties.method = "max")    ## ranking allowing ties
   qvalue = pi0 * m * p.value / v            ##  
   qvalue[u[m]] = min(qvalue[u[m]], 1) ## no larger than 1

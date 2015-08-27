@@ -5,19 +5,19 @@
 # Descriptions:      Functions about the workflow and efficiency of analysis
 # Last Update:       Aug 26, 2015 2:59 PM
 # Contents:
-# 2
+# 1
 # FUNCTION:     clc.functions()
 # @title        Clean all (customed) functions in present environment
-# 3
+# 2
 # FUNCTION:     repmat(a,n,m)
 # @title        Replication of matrix (mat) n x m times 
-# 4
+# 3
 # FUNCTION:     strsplit.mat(vec.char,sep=" ")
 # @title        A matrix version of strsplit()
-# 5
+# 4
 # FUNCTION:     blank.remover(vec.char)
 # @title        Remove blanks in the end of characters
-# 6
+# 5
 # FUNCTION:     ScaleMatrics(mat,scale.coef,MARGIN)
 # @title        Matrics scaling
 #------------------------------------------------------------------------------
