@@ -106,7 +106,7 @@ strsplit.mat = function(vec.char,sep=" "){
 # UPDATED Aug 26, 2015 2:59 PM
 # FUNCTION:     blank.remover(vec.char)
 #' @title       Remove blanks in the end of characters
-#' @param       vec.char
+#' @param       vec.char A vector of characters for testing
 #' @return      A vector of characters
 # -----------------------------------------------------------------------------
 #' @export      

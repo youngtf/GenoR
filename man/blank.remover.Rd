@@ -7,7 +7,7 @@
 blank.remover(vec.char)
 }
 \arguments{
-\item{vec.char}{}
+\item{vec.char}{A vector of characters for testing}
 }
 \value{
 A vector of characters

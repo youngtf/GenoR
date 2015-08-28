@@ -31,7 +31,7 @@
 #'              and draw a basic frame for manhattan plots
 #' @examples    
 #' SID = paste("SNP",1:20,sep="_")
-#' chromosome = c(rep("0",3),rep("1",5),rep("2",3),rep("X",6),rep("Y",3)))
+#' chromosome = c(rep("0",3),rep("1",5),rep("2",3),rep("X",6),rep("Y",3))
 #' position = c(31, 71, 45, 60, 34, 41, 19, 23, 63, 43,  
 #'               2, 79,  6 ,95, 39, 97, 15, 32, 56, 88)
 #'               
@@ -116,7 +116,10 @@ DrawAFrame = function(map.sorted, gap, ylim, axes = FALSE,
 
 # -----------------------------------------------------------------------------
 # UPDATED Aug 28, 2015 12:26 PM
-# FUNCTION:     
+# FUNCTION:     Manhattan(res.gwas.ID, res.gwas.value, map.sorted,
+#                         gap  = 50000000, ylim = NULL, xlab = "Chromosome", 
+#                         ylab = "", title= "", axes = TRUE, ltype = "p", 
+#                         pch = 16, cols = c("dark blue","cornflowerblue"))
 #' @title       Draw Manhattan plots
 #' @param       res.gwas.ID     The ID of markers from GWAS result
 #' @param       res.gwas.value  The value of markers from GWAS result
@@ -134,10 +137,9 @@ DrawAFrame = function(map.sorted, gap, ylim, axes = FALSE,
 # -----------------------------------------------------------------------------
 #' @export      
 #' @note        This is a function that draws Manhattan plots
-#' # @examples    \
 # -----------------------------------------------------------------------------
 
-Manhattan.lite = function(res.gwas.ID,
+Manhattan = function(res.gwas.ID,
                           res.gwas.value,
                           map.sorted,
                           gap  = 50000000, ylim = NULL,              # frame
@@ -171,8 +173,10 @@ Manhattan.lite = function(res.gwas.ID,
     }
   # axes
     if (axes){
-      axis(side=2)                                         ### left axis
-      axis(side=1,at=res.frame$chrom.mid,labels=chromsort) ### bottom axis
+      axis(side = 2)                                         ### left axis
+      axis(side = 1, 
+           at     = res.frame$chr.mid,
+           labels = res.frame$chr.id) ### bottom axis
     }
   
   return(res.frame)
@@ -180,7 +184,7 @@ Manhattan.lite = function(res.gwas.ID,
 
 # -----------------------------------------------------------------------------
 # UPDATED Aug 28, 2015 12:26 PM
-# FUNCTION:     plot.lsmeans(res.lm,SNPnames,    nSNPs = length(SNPnames),
+# FUNCTION:     PlotLSmeans(res.lm,SNPnames,    nSNPs = length(SNPnames),
 #                            mfrow = c(1,nSNPs), mar   = c(4.1,5.1,2.1,1.1)
 #                            ylim  = c(2,6),     ylab  = "lsmean",
 #                            xlab  = NULL)
@@ -194,12 +198,12 @@ Manhattan.lite = function(res.gwas.ID,
 #' @param       xlab,ylab   Parameters passed to plot.default() 
 #' @return      NULL
 # -----------------------------------------------------------------------------
+#' @import      lsmeans
 #' @export      
 #' @note        This is a function to plot (multiple) lsmeans results.
-#' # @examples    \
 # -----------------------------------------------------------------------------
 
-plot.lsmeans = function(res.lm
+PlotLSmeans =  function(res.lm
                         ,SNPnames
                         ,nSNPs = length(SNPnames)
                         ,mfrow = c(1,nSNPs)

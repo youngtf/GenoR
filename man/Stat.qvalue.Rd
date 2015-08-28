@@ -8,19 +8,9 @@ Stat.qvalue(p.value)
 }
 \arguments{
 \item{p.value}{The p-values obtained from multiple testing}
-
-\item{\}{}
-
-\item{\}{}
-
-\item{\}{}
-
-\item{\}{}
-
-\item{\}{}
 }
 \value{
-\item{name a}{description} \
+q.value with the same length of p.value
 }
 \description{
 calculate q-values based on a set of p-values in Multiple Tests

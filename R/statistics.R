@@ -14,12 +14,7 @@
 # FUNCTION:     Stat.qvalue(p.value)
 #' @title       calculate q-values based on a set of p-values in Multiple Tests
 #' @param       p.value The p-values obtained from multiple testing
-#' @param       \
-#' @param       \
-#' @param       \
-#' @param       \
-#' @param       \
-#' @return      \item{name a}{description} \
+#' @return      q.value with the same length of p.value
 # -----------------------------------------------------------------------------
 #' @export      
 #' @note        This is a revised version of the qvalue() function in 
