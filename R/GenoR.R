@@ -9,5 +9,6 @@
 #' @name GenoR
 #' @docType package
 #' @import Matrix
+#' @import dplyr
 
 NULL

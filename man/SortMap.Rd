@@ -30,10 +30,10 @@ build a geno_map object with sorted information
 This is a function for sortting map information of SNPs.
 }
 \examples{
-chromname = c(0:2,"X","Y")
 SID = paste("SNP",1:20,sep="_")
 chromosome = c(rep("0",3),rep("1",5),rep("2",3),rep("X",6),rep("Y",3)))
-position = sample(1:100,20)
+position = c(31, 71, 45, 60, 34, 41, 19, 23, 63, 43,
+              2, 79,  6 ,95, 39, 97, 15, 32, 56, 88)
 
 data.frame(SID,chromosome,position)
 #       SID chromosome position
