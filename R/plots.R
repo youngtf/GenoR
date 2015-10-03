@@ -6,14 +6,22 @@
 # Last Update:       Aug 27, 2015 5:10 PM
 # Contents:
 # 1
-#   Function:    Manhattan.lite(res,mapinfo,ylim=NULL,xlab=NULL
-#                             ,gap=50000000,ltype="p",title= NULL)
-#   Description: Manhattan plot for a single result of GWAS
+#   Function:    DrawAFrame(map.sorted, gap, ylim, axes = FALSE,
+#                           xlab = "", ylab = "", title = "")
 # 2
-#   Function:    MultiManhattan(res,mapinfo,ylim0 = NULL,ylab = NULL
-#                               ,gap  = NULL,ltype= "h",title= NULL,sub = NULL)
-#   Description: Manhattan plot for comparison of results of GWAS
-#------------------------------------------------------------------------------
+#   Function:    Manhattan(res.gwas.ID, res.gwas.value, map.sorted,
+#                          gap  = 50000000, ylim = NULL, xlab = "Chromosome", 
+#                          ylab = "", title= "", axes = TRUE, ltype = "p", 
+#                          pch = 16, cols = c("dark blue","cornflowerblue"))
+# 3 
+#   Function:    PlotLSmeans(res.lm,SNPnames,    nSNPs = length(SNPnames),
+#                            mfrow = c(1,nSNPs), mar   = c(4.1,5.1,2.1,1.1)
+#                            ylim  = c(2,6),     ylab  = "lsmean",
+#                            xlab  = NULL)
+# -----------------------------------------------------------------------------
+# To-do list:
+# 1 suppress message in Manhattan
+# 2 clear possible warning in the join of tbls in Manhattan
 # -----------------------------------------------------------------------------
 # UPDATED Aug 27, 2015 5:35 PM
 # FUNCTION:     DrawAFrame(map.sorted, gap, ylim, axes = FALSE,
