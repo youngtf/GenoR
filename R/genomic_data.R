@@ -48,15 +48,12 @@
 # Notes
 # Descriptions:      To-do List
 # To-do              
-# 1 construction of AB matrix          CHECK!      
-# 2 unit tests with "CC/TT"            CHECK! 
-# 3 comments for PED                   CHECK!
-# 4 re-write QC function               CHECK!
-# 5 combine PedR and PED function
-# 6 A wraper for formatting (and AB file output)
-# 7 A AGCT->AB function based on exsiting file
-#
-# Last Update:       Aug 26, 2015
+# 1 combine PedR and PED function
+# 2 A wraper for formatting (and AB file output)
+# 3 A AGCT->AB function based on exsiting file
+# 4 add PED fast writing option (using matrix) 
+# 
+# Last Update:       Oct 21, 2015 10:59 AM
 # -----------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Feb 16, 2015 14:12
