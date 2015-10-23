@@ -20,8 +20,8 @@
 #                            xlab  = NULL)
 # -----------------------------------------------------------------------------
 # To-do list:
-# 1 suppress message in Manhattan
-# 2 clear possible warning in the join of tbls in Manhattan
+# 1 suppress message in Manhattan                               Done!
+# 2 clear possible warning in the join of tbls in Manhattan     Done!
 # -----------------------------------------------------------------------------
 # UPDATED Aug 27, 2015 5:35 PM
 # FUNCTION:     DrawAFrame(map.sorted, gap, ylim, axes = FALSE,
@@ -148,30 +148,32 @@ DrawAFrame = function(map.sorted, gap, ylim, axes = FALSE,
 # -----------------------------------------------------------------------------
 
 Manhattan = function(res.gwas.ID,
-                          res.gwas.value,
-                          map.sorted,
-                          gap  = 50000000, ylim = NULL,              # frame
-                          xlab = "Chromosome", ylab = "", title= "", # frame
-                          axes = TRUE,                               # frame
-                          ltype = "p", pch = 16,                     # points
-                          cols = c("dark blue","cornflowerblue")     # points
-                         ){
+                     res.gwas.value,
+                     map.sorted,
+                     gap  = 50000000, ylim = NULL,              # frame
+                     xlab = "Chromosome", ylab = "", title= "", # frame
+                     axes = TRUE,                               # frame
+                     ltype = "p", pch = 20,                     # points
+                     cols = c("dark blue","cornflowerblue")     # points
+                    ){
   # calculate ylim if needed
     if(is.null(ylim)){  
       ylim = c(0,max(res.gwas.value)*1.1)
     }
   # draw the frame
     res.frame = DrawAFrame(map.sorted, gap = gap, ylim = ylim, axes = FALSE,
-                           xlab = xlab, ylab = xlab, title = title)
+                           xlab = xlab, ylab = ylab, title = title)
   
   # result data frame
-    res.df = data.frame(ID = res.gwas.ID, value = res.gwas.value)
+    res.df = data.frame(ID = res.gwas.ID, 
+                        value = res.gwas.value,
+                        stringsAsFactors = FALSE)
     
   # loop across chromosomes 
     for (i.chr in 1:nrow(res.frame)){    
       name.chr = res.frame$chr.id[i.chr]
       point.data = map.sorted$SNPs[[name.chr]]
-      point.data = left_join(point.data,res.df)
+      point.data = suppressMessages(left_join(point.data,res.df))
       point.data$value[is.na(point.data$value)] = ylim[1] - 1  # hide 
       point.data$x = res.frame$chr.start[i.chr] + point.data$position
       points(point.data$x,
