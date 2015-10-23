@@ -55,6 +55,7 @@
 # 5 combine PedR and PED function
 # 6 A wraper for formatting (and AB file output)
 # 7 A AGCT->AB function based on exsiting file
+# 8 new option: no sex column in PED
 #
 # Last Update:       Aug 26, 2015
 # -----------------------------------------------------------------------------
