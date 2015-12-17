@@ -165,7 +165,7 @@ Manhattan = function(res.gwas.ID,
                            xlab = xlab, ylab = ylab, title = title)
   
   # result data frame
-    res.df = data.frame(ID = res.gwas.ID, 
+    res.df = data.frame(ID = as.character(res.gwas.ID), 
                         value = res.gwas.value,
                         stringsAsFactors = FALSE)
     
@@ -186,7 +186,7 @@ Manhattan = function(res.gwas.ID,
       axis(side = 2)                                         ### left axis
       axis(side = 1, 
            at     = res.frame$chr.mid,
-           labels = res.frame$chr.id) ### bottom axis
+           labels = res.frame$chr.id)                        ### bottom axis
     }
   
   return(res.frame)
