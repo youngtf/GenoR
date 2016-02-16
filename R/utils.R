@@ -162,15 +162,20 @@ blank.remover = function(vec.char){
 #'              scalar (can be different across rows/columns)
 #'              Thanks for Dr. Zhiquan Wang's contribution.
 #' @examples 
-#' mat = matrix(1,3,3)
-#' ScaleMatrics(mat,c(2,3,5),1)
-#' # 3 x 3 Matrix of class "dgeMatrix"
-#' # [,1] [,2] [,3]
-#' # [1,]    2    2    2
-#' # [2,]    3    3    3
-#' # [3,]    5    5    5
+#' (mat = matrix(1,3,5))
+#' [,1] [,2] [,3] [,4] [,5]
+#' [1,]    1    1    1    1    1
+#' [2,]    1    1    1    1    1
+#' [3,]    1    1    1    1    1
 #' 
-#' ScaleMatrics(mat,c(2,3,5),2)
+#' ScaleMatrics(mat,c(2,3,5),1)
+#' 3 x 5 Matrix of class "dgeMatrix"
+#'      [,1] [,2] [,3] [,4] [,5]
+#' [1,]    2    2    2    2    2
+#' [2,]    3    3    3    3    3
+#' [3,]    5    5    5    5    5
+#' 
+#' ScaleMatrics(mat,c(2,3,5,7,8),2)
 #' # 3 x 3 Matrix of class "dgeMatrix"
 #' # [,1] [,2] [,3]
 #' # [1,]    2    3    5
@@ -180,18 +185,24 @@ blank.remover = function(vec.char){
 # -----------------------------------------------------------------------------
 # May 8, 2015 10:09 AM
 # 1 May not be able to handle missing value 
+# 2 variable m is not correctly assign when MARGIN = 2        check!
 # -----------------------------------------------------------------------------
 
 ScaleMatrics = function(mat,scale.coef,MARGIN){
-  m = nrow(mat)
   n.coef = length(scale.coef)
-  if (m != n.coef) {
-    stop("Wrong dimension of input matrices")
-  }
+  ## a sparse diagnal matrix
   scale.matrix = sparseMatrix(i=seq(n.coef),j=seq(n.coef),x=scale.coef)
   if (MARGIN == 1){
+    m = nrow(mat)
+    if (m != n.coef) {
+      stop("Wrong dimension of input matrices")
+    }
     res = scale.matrix %*% mat
   } else if (MARGIN == 2){
+    m = ncol(mat)
+    if (m != n.coef) {
+      stop("Wrong dimension of input matrices")
+    }
     res = mat %*% scale.matrix
   } else {
     stop("Should not get here!")
