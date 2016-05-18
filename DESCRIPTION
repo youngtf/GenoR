@@ -1,10 +1,16 @@
 Package: GenoR
 Type: Package
-Title: A (personal) package with functions for the analysis of genetic and genomic data
+Title: A (personal) package with functions for the analysis of genetic and
+    genomic data
 Version: 0.3.0
 Date: 2015-03-13
 Author: Tianfu Yang (tianfu@ualberta.ca)
 Maintainer: Tianfu Yang <tianfu@ualberta.ca>
-Description: Some functions for the analysis of genetic and genomic data, especially for GWAS.
+Description: Some functions for the analysis of genetic and genomic data,
+    especially for GWAS.
 License: GPL-2
-Depends: Matrix, dplyr, lsmeans
+Depends:
+    Matrix,
+    dplyr,
+    lsmeans
+RoxygenNote: 5.0.1
