@@ -243,7 +243,7 @@ SortMap = function(SID, chromosome, position, allosome = NULL){
 #' 
 #' CreateWindowMap(SID, chromosome, position, distance = 30)
 #' # $Chromosomes
-#' # chr.id chr.is.allosome chr.length chr.n.window
+#' #   chr.id chr.is.allosome chr.length chr.n.window
 #' # 0      0           FALSE         71            3
 #' # 1      1           FALSE         60            2
 #' # 2      2           FALSE         63            3
@@ -252,31 +252,31 @@ SortMap = function(SID, chromosome, position, allosome = NULL){
 #' # 
 #' # $Windows
 #' # $Windows$`0`
-#' # ID chromosome position
+#' #    ID chromosome position
 #' # 1 0_1          0        0
 #' # 2 0_2          0        1
 #' # 3 0_3          0        2
 #' # 
 #' # $Windows$`1`
-#' # ID chromosome position
+#' #    ID chromosome position
 #' # 1 1_1          1        0
 #' # 2 1_2          1        1
 #' # 
 #' # $Windows$`2`
-#' # ID chromosome position
+#' #    ID chromosome position
 #' # 1 2_1          2        0
 #' # 2 2_2          2        1
 #' # 3 2_3          2        2
 #' # 
 #' # $Windows$X
-#' # ID chromosome position
+#' #    ID chromosome position
 #' # 1 X_1          X        0
 #' # 2 X_2          X        1
 #' # 3 X_3          X        2
 #' # 4 X_4          X        3
 #' # 
 #' # $Windows$Y
-#' # ID chromosome position
+#' #    ID chromosome position
 #' # 1 Y_1          Y        0
 #' # 2 Y_2          Y        1
 #' # 3 Y_3          Y        2
@@ -287,7 +287,9 @@ SortMap = function(SID, chromosome, position, allosome = NULL){
 # -----------------------------------------------------------------------------
 
 CreateWindowMap = function(SID, chromosome, position, 
-                           allosome = NULL, distance = 10^6){
+                           allosome = NULL, 
+                           distance = 10^6   ## size of windows
+                           ){
   
   ## Reorder the map
     map.sorted = SortMap(SID, chromosome, position, allosome = NULL)
@@ -314,4 +316,77 @@ CreateWindowMap = function(SID, chromosome, position,
                    Windows     = map.info)
     attributes(map.win)$class = c("geno.map.window",attributes(map.win)$class)
   return(map.win)
+}
+
+
+# -----------------------------------------------------------------------------
+# Block
+# Descriptions:      
+# -----------------------------------------------------------------------------
+#' # SNP2Window(SID, chromosome, position, distance = 30)
+#' # $Chromosomes
+#' # chr.id chr.is.allosome chr.length chr.n.window
+#' # 0      0           FALSE         77            3
+#' # 1      1           FALSE         98            4
+#' # 2      2           FALSE         88            3
+#' # X      X            TRUE         94            4
+#' # Y      Y            TRUE         68            3
+#' # 
+#' # $SNPs
+#' # $SNPs$`0`
+#' # ID chromosome position window
+#' # 2 SNP_2          0       41    0_2
+#' # 3 SNP_3          0       72    0_3
+#' # 1 SNP_1          0       77    0_3
+#' # 
+#' # $SNPs$`1`
+#' # ID chromosome position window
+#' # 3 SNP_6          1       18    1_1
+#' # 4 SNP_7          1       22    1_1
+#' # 5 SNP_8          1       23    1_1
+#' # 1 SNP_4          1       51    1_2
+#' # 2 SNP_5          1       98    1_4
+#' # 
+#' # $SNPs$`2`
+#' # ID chromosome position window
+#' # 1  SNP_9          2       27    2_1
+#' # 2 SNP_10          2       52    2_2
+#' # 3 SNP_11          2       88    2_3
+#' # 
+#' # $SNPs$X
+#' # ID chromosome position window
+#' # 6 SNP_17          X       11    X_1
+#' # 5 SNP_16          X       34    X_2
+#' # 3 SNP_14          X       37    X_2
+#' # 2 SNP_13          X       60    X_2
+#' # 1 SNP_12          X       65    X_3
+#' # 4 SNP_15          X       94    X_4
+#' # 
+#' # $SNPs$Y
+#' # ID chromosome position window
+#' # 1 SNP_18          Y        2    Y_1
+#' # 3 SNP_20          Y       44    Y_2
+#' # 2 SNP_19          Y       68    Y_3
+#' # 
+#' # attr(,"class")
+#' # [1] "geno.snp2window" "geno.map"  
+# -----------------------------------------------------------------------------
+SNP2Window = function(SID, chromosome, position, 
+                      allosome = NULL, 
+                      distance = 10^6    ## size of windows
+                      ){
+  
+  ## Reorder the map
+  map.sorted = SortMap(SID, chromosome, position, allosome = NULL)
+  ## chromosome info
+  map.sorted$Chromosomes$chr.n.window = ceiling(map.sorted$Chromosomes$chr.length / distance)
+  n.chromosome = length(map.sorted$Chromosomes$chr.id)
+  ## add windows info
+  for (i in 1:n.chromosome){
+    window.idx = ceiling(map.sorted$SNPs[[i]]$position / distance)
+    map.sorted$SNPs[[i]]$window = paste0(map.sorted$SNPs[[i]]$chromosome, "_", window.idx)
+  }
+  ## result 
+  attributes(map.sorted)$class = c("geno.snp2window",attributes(map.sorted)$class)
+  return(map.sorted)
 }
