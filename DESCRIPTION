@@ -11,6 +11,5 @@ Description: Some functions for the analysis of genetic and genomic data,
 License: GPL-2
 Depends:
     Matrix,
-    dplyr,
-    lsmeans
+    dplyr
 RoxygenNote: 5.0.1

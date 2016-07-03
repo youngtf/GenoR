@@ -60,7 +60,7 @@ data.frame(SID,chromosome,position)
 
 CreateWindowMap(SID, chromosome, position, distance = 30)
 # $Chromosomes
-# chr.id chr.is.allosome chr.length chr.n.window
+#   chr.id chr.is.allosome chr.length chr.n.window
 # 0      0           FALSE         71            3
 # 1      1           FALSE         60            2
 # 2      2           FALSE         63            3
@@ -69,31 +69,31 @@ CreateWindowMap(SID, chromosome, position, distance = 30)
 # 
 # $Windows
 # $Windows$`0`
-# ID chromosome position
+#    ID chromosome position
 # 1 0_1          0        0
 # 2 0_2          0        1
 # 3 0_3          0        2
 # 
 # $Windows$`1`
-# ID chromosome position
+#    ID chromosome position
 # 1 1_1          1        0
 # 2 1_2          1        1
 # 
 # $Windows$`2`
-# ID chromosome position
+#    ID chromosome position
 # 1 2_1          2        0
 # 2 2_2          2        1
 # 3 2_3          2        2
 # 
 # $Windows$X
-# ID chromosome position
+#    ID chromosome position
 # 1 X_1          X        0
 # 2 X_2          X        1
 # 3 X_3          X        2
 # 4 X_4          X        3
 # 
 # $Windows$Y
-# ID chromosome position
+#    ID chromosome position
 # 1 Y_1          Y        0
 # 2 Y_2          Y        1
 # 3 Y_3          Y        2

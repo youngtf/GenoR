@@ -13,11 +13,10 @@ Stat.qvalue(p.value)
 q.value with the same length of p.value
 }
 \note{
-This is a revised version of the qvalue() function in 
+This is a revised version of the qvalue() function in
              R/rrBLUP::GWAS().
 }
 \examples{
-   
 p = runif(1000)
 q2 = Stat.qvalue(p)
 }
