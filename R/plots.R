@@ -22,6 +22,8 @@
 # To-do list:
 # 1 suppress message in Manhattan                               Done!
 # 2 clear possible warning in the join of tbls in Manhattan     Done!
+# 3 Transfer the plotting system to ggplot2
+# 4 Annotation tool for manhattan plot
 # -----------------------------------------------------------------------------
 # UPDATED Aug 27, 2015 5:35 PM
 # FUNCTION:     DrawAFrame(map.sorted, gap, ylim, axes = FALSE,
