@@ -85,7 +85,7 @@ position = c(31, 71, 45, 60, 34, 41, 19, 23, 63, 43,
 # 
 # attr(,"class")
 # [1] "geno.map"
-DrawAFrame(map.sorted, gap = 30, ylim = c(1,3))
+# DrawAFrame(map.sorted, gap = 30, ylim = c(1,3))        ## not exported
 #   chr.id chr.is.allosome chr.length chr.start chr.end chr.mid
 # 1      1           FALSE         60         1      61    31.0
 # 2      2           FALSE         63        91     154   122.5

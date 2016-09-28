@@ -8,7 +8,9 @@
 #' Maintainer: Tianfu Yang \email{tianfu@@ualberta.ca}
 #' @name GenoR
 #' @docType package
-#' @import Matrix
+#' @importFrom graphics axis plot points
+#' @importFrom stats predict smooth.spline
+#' @importFrom Matrix sparseMatrix
 #' @import dplyr
 
 NULL

@@ -28,17 +28,17 @@ Each vector in the matrix is scaled using the corresponding
 }
 \examples{
 (mat = matrix(1,3,5))
-[,1] [,2] [,3] [,4] [,5]
-[1,]    1    1    1    1    1
-[2,]    1    1    1    1    1
-[3,]    1    1    1    1    1
+# [,1] [,2] [,3] [,4] [,5]
+# [1,]    1    1    1    1    1
+# [2,]    1    1    1    1    1
+# [3,]    1    1    1    1    1
 
 ScaleMatrics(mat,c(2,3,5),1)
-3 x 5 Matrix of class "dgeMatrix"
-     [,1] [,2] [,3] [,4] [,5]
-[1,]    2    2    2    2    2
-[2,]    3    3    3    3    3
-[3,]    5    5    5    5    5
+# 3 x 5 Matrix of class "dgeMatrix"
+#      [,1] [,2] [,3] [,4] [,5]
+# [1,]    2    2    2    2    2
+# [2,]    3    3    3    3    3
+# [3,]    5    5    5    5    5
 
 ScaleMatrics(mat,c(2,3,5,7,8),2)
 # 3 x 3 Matrix of class "dgeMatrix"
