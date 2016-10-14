@@ -13,3 +13,4 @@ Depends:
     Matrix,
     dplyr
 RoxygenNote: 5.0.1
+Suggests: testthat
