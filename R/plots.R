@@ -7,8 +7,9 @@
 # Contents:
 # -----------------------------------------------------------------------------
 # TO-DO:
-# 1. all markers in the map info?
-# 2. 2-in-1 plot
+# 1. [checking]    all markers in the map info?
+# 2. [improvement] 2-in-1 plot
+# 3. [checking]    in the case that no marker in available in the bins 
 # -----------------------------------------------------------------------------
 # Note
 # The basic logic in this module:
@@ -50,27 +51,15 @@
 # -----------------------------------------------------------------------------
 # load("data/test_marker_value.Rdata")
 # load("data/test_marker_map.Rdata")
-# 
-# sorted_map = sort_map(MarID      = Map80k$MarID,
-#                       chromosome = Map80k$Chr,
-#                       position   = Map80k$Pos,
-#                       allosome = c("X","Y"),
-#                       unmapped = "0",
-#                       mitochondria = "MT"
-#                       )
-# bin_list = genome_wide_bin_list(sorted_map)
-# bin_list = check_bin_list(bin_list,sorted_map)
-# bin_frame = calculate_frame(bin_list, gap = 50000000)
-# 
-# marker_data = map_to_genome(marker_value, sorted_map)
-# marker_data_pos = calculate_pos(marker_data, bin_frame)
-# marker_data_pos = filter(marker_data_pos, !is.na(bin))
-# 
-# gwas_res_marker_id    = marker_value$MarID
-# gwas_res_marker_value = -log(marker_value$P, 10)
-# map_marker_id         = Map80k$MarID
-# map_marker_chr        = Map80k$Chr
-# map_marker_pos        = Map80k$Pos
+# Manhattan(marker_value$MarID, -log(marker_value$P, 10),
+#           Map80k$MarID,Map80k$Chr,Map80k$Pos)
+test_bin_list = data.frame(Chr       = c(1,     3,     5),
+                           start_pos = c(100000,200000,300000),
+                           end_pos   = c(10100000,10200000,10300000))
+Manhattan(marker_value$MarID, -log(marker_value$P, 10),
+          Map80k$MarID,Map80k$Chr,Map80k$Pos,gap = 2000000,
+          bin_list = test_bin_list)
+
 
 Manhattan = function(gwas_res_marker_id,                        # GWAS
                      gwas_res_marker_value,                     # GWAS
@@ -246,6 +235,10 @@ Manhattan = function(gwas_res_marker_id,                        # GWAS
   res_plot = calculate_pos(res_data, bin_frame)
   res_plot = trim_plot_data(res_plot)
   res_plot = mutate(res_plot, col_group = cols[bin %% 2 + 1])
+  
+  if (is.null(y_lim)){
+    y_lim = c(0, max(res_plot$Value) * 1.1)
+  }
   
   ### plot the frame
   ggplot(res_plot, aes(x = x, y = Value))             +
