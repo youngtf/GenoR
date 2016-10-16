@@ -53,12 +53,12 @@
 # load("data/test_marker_map.Rdata")
 # Manhattan(marker_value$MarID, -log(marker_value$P, 10),
 #           Map80k$MarID,Map80k$Chr,Map80k$Pos)
-test_bin_list = data.frame(Chr       = c(1,     3,     5),
-                           start_pos = c(100000,200000,300000),
-                           end_pos   = c(10100000,10200000,10300000))
-Manhattan(marker_value$MarID, -log(marker_value$P, 10),
-          Map80k$MarID,Map80k$Chr,Map80k$Pos,gap = 2000000,
-          bin_list = test_bin_list)
+# test_bin_list = data.frame(Chr       = c(1,     3,     5),
+#                            start_pos = c(100000,200000,300000),
+#                            end_pos   = c(10100000,10200000,10300000))
+# Manhattan(marker_value$MarID, -log(marker_value$P, 10),
+#           Map80k$MarID,Map80k$Chr,Map80k$Pos,gap = 2000000,
+#           bin_list = test_bin_list)
 
 
 Manhattan = function(gwas_res_marker_id,                        # GWAS
