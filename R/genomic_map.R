@@ -43,157 +43,6 @@
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
-# UPDATED Aug 27, 2015 1:11 PM
-# FUNCTION:     SortMap(SID,chromosome,position)
-#' @title       build a geno_map object with sorted information
-#' @param       SID        A vector of SNP IDs (character)
-#' @param       chromosome A vector of chromosome (character) where the SNP 
-#'                         is located. Support [1-9]{1,2}|[A-Z] ie. 0-99 or 
-#'                         a single upper letter. 0 for unmapped SNPs
-#' @param       position   A vector of position (integer) where the SNP 
-#'                         is located.
-#' @param       allosome   A vector of the names of allosomes. By default all
-#'                         chromosomes natated with upper letters will be 
-#'                         treated as allosomes
-#' @return      A geno.map object
-# -----------------------------------------------------------------------------
-#' @export      
-#' @note        This is a function for sortting map information of SNPs.
-#' @examples    
-#' SID = paste("SNP",1:20,sep="_")
-#' chromosome = c(rep("0",3),rep("1",5),rep("2",3),rep("X",6),rep("Y",3))
-#' position = c(31, 71, 45, 60, 34, 41, 19, 23, 63, 43,  
-#'               2, 79,  6 ,95, 39, 97, 15, 32, 56, 88)
-#' 
-#' data.frame(SID,chromosome,position)
-#' #       SID chromosome position
-#' # 1   SNP_1          0       31
-#' # 2   SNP_2          0       71
-#' # 3   SNP_3          0       45
-#' # 4   SNP_4          1       60
-#' # 5   SNP_5          1       34
-#' # 6   SNP_6          1       41
-#' # 7   SNP_7          1       19
-#' # 8   SNP_8          1       23
-#' # 9   SNP_9          2       63
-#' # 10 SNP_10          2       43
-#' # 11 SNP_11          2        2
-#' # 12 SNP_12          X       79
-#' # 13 SNP_13          X        6
-#' # 14 SNP_14          X       95
-#' # 15 SNP_15          X       39
-#' # 16 SNP_16          X       97
-#' # 17 SNP_17          X       15
-#' # 18 SNP_18          Y       32
-#' # 19 SNP_19          Y       56
-#' # 20 SNP_20          Y       88
-#' 
-#' SortMap(SID, chromosome, position)
-#' # $Chromosomes
-#' #   chr.id chr.is.allosome chr.length
-#' # 0      0           FALSE         71
-#' # 1      1           FALSE         60
-#' # 2      2           FALSE         63
-#' # X      X            TRUE         97
-#' # Y      Y            TRUE         88
-#' # 
-#' # $SNPs
-#' # $SNPs$`0`
-#' #    ID    chromosome position
-#' # 1 SNP_1           0       31
-#' # 3 SNP_3           0       45
-#' # 2 SNP_2           0       71
-#' # 
-#' # $SNPs$`1`
-#' #    ID    chromosome position
-#' # 4 SNP_7           1       19
-#' # 5 SNP_8           1       23
-#' # 2 SNP_5           1       34
-#' # 3 SNP_6           1       41
-#' # 1 SNP_4           1       60
-#' # 
-#' # $SNPs$`2`
-#' #    ID    chromosome position
-#' # 3 SNP_11          2        2
-#' # 2 SNP_10          2       43
-#' # 1  SNP_9          2       63
-#' # 
-#' # $SNPs$X
-#' #    ID    chromosome position
-#' # 2 SNP_13          X        6
-#' # 6 SNP_17          X       15
-#' # 4 SNP_15          X       39
-#' # 1 SNP_12          X       79
-#' # 3 SNP_14          X       95
-#' # 5 SNP_16          X       97
-#' # 
-#' # $SNPs$Y
-#' #    ID    chromosome position
-#' # 1 SNP_18          Y       32
-#' # 2 SNP_19          Y       56
-#' # 3 SNP_20          Y       88
-#' # 
-#' # 
-#' # attr(,"class")
-#' # [1] "geno.map"
-# -----------------------------------------------------------------------------
-SortMap = function(SID, chromosome, position, allosome = NULL){
-  # chromosome information:
-    chromname = as.character(unique(chromosome))
-    n.chromosome = length(chromname)
-    idx.num      = grep("[1-9]{1,2}",chromname)
-    idx.char     = grep("[A-Z]",     chromname)
-    idx.unmapped = which(chromname == "0")
-    if (any(!(seq(n.chromosome) %in% c(idx.num,idx.char,idx.unmapped)))){
-      stop("invalid chromosome name(s):",
-           chromname[!(seq(n.chromosome) %in% c(idx.num,idx.char,idx.unmapped))]
-           )
-    }
-    # chromosomeID
-      chr.ID = character(0)
-      if (length(idx.unmapped) == 1){
-        chr.ID = c(chr.ID, "0")
-      }
-      if (length(idx.num) > 0){
-        chr.ID = c(chr.ID, as.character(sort(as.integer(chromname[idx.num]))))
-      }
-      if (length(idx.num) > 0){
-        chr.ID = c(chr.ID, sort(chromname[idx.char]))
-      }
-    # isAutosome
-      if (is.null(allosome)){
-        chr.is.allosome = (chr.ID %in% chromname[idx.char])
-      } else {
-        chr.is.allosome = (chr.ID %in% allosome)
-      }
-    
-  # Maps
-    map.info = vector("list",n.chromosome)
-    names(map.info) = chr.ID
-    for (i in 1:n.chromosome){
-      chr.name = chr.ID[i]
-      idx.this.chr = which(chromosome == chr.name)
-      chr.snp = SID[idx.this.chr]
-      chr.pos = position[idx.this.chr]
-      map.temp = data.frame(ID         = chr.snp,
-                            chromosome = chr.name,
-                            position   = chr.pos,
-                            stringsAsFactors = FALSE)
-      map.info[[i]] = map.temp[order(chr.pos),]
-    }
-  # chromosome length
-    chr.length = unlist(lapply(map.info,function(x) max(x$position)))
-
-  res.map = list(Chromosomes = data.frame(chr.id          = chr.ID,
-                                          chr.is.allosome = chr.is.allosome,
-                                          chr.length      = chr.length,
-                                          stringsAsFactors = FALSE),
-                 SNPs        = map.info)
-  attributes(res.map)$class = c("geno.map",attributes(res.map)$class)
-  return(res.map)
-}
-
-# -----------------------------------------------------------------------------
 # UPDATED Aug 27, 2015 4:18 PM
 # FUNCTION:     CreateWindowMap(SID, chromosome, position, 
 #                               allosome = NULL, distance = 10^6)
@@ -323,6 +172,7 @@ CreateWindowMap = function(SID, chromosome, position,
 # Block
 # Descriptions:      
 # -----------------------------------------------------------------------------
+#' 
 #' # SNP2Window(SID, chromosome, position, distance = 30)
 #' # $Chromosomes
 #' # chr.id chr.is.allosome chr.length chr.n.window
@@ -371,22 +221,22 @@ CreateWindowMap = function(SID, chromosome, position,
 #' # attr(,"class")
 #' # [1] "geno.snp2window" "geno.map"  
 # -----------------------------------------------------------------------------
-SNP2Window = function(SID, chromosome, position, 
-                      allosome = NULL, 
-                      distance = 10^6    ## size of windows
-                      ){
-  
-  ## Reorder the map
-  map.sorted = SortMap(SID, chromosome, position, allosome = NULL)
-  ## chromosome info
-  map.sorted$Chromosomes$chr.n.window = ceiling(map.sorted$Chromosomes$chr.length / distance)
-  n.chromosome = length(map.sorted$Chromosomes$chr.id)
-  ## add windows info
-  for (i in 1:n.chromosome){
-    window.idx = ceiling(map.sorted$SNPs[[i]]$position / distance)
-    map.sorted$SNPs[[i]]$window = paste0(map.sorted$SNPs[[i]]$chromosome, "_", window.idx)
-  }
-  ## result 
-  attributes(map.sorted)$class = c("geno.snp2window",attributes(map.sorted)$class)
-  return(map.sorted)
-}
+# SNP2Window = function(SID, chromosome, position, 
+#                       allosome = NULL, 
+#                       distance = 10^6    ## size of windows
+#                       ){
+#   
+#   ## Reorder the map
+#   map.sorted = SortMap(SID, chromosome, position, allosome = NULL)
+#   ## chromosome info
+#   map.sorted$Chromosomes$chr.n.window = ceiling(map.sorted$Chromosomes$chr.length / distance)
+#   n.chromosome = length(map.sorted$Chromosomes$chr.id)
+#   ## add windows info
+#   for (i in 1:n.chromosome){
+#     window.idx = ceiling(map.sorted$SNPs[[i]]$position / distance)
+#     map.sorted$SNPs[[i]]$window = paste0(map.sorted$SNPs[[i]]$chromosome, "_", window.idx)
+#   }
+#   ## result 
+#   attributes(map.sorted)$class = c("geno.snp2window",attributes(map.sorted)$class)
+#   return(map.sorted)
+# }

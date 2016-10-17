@@ -60,6 +60,37 @@
 #           Map80k$MarID,Map80k$Chr,Map80k$Pos,gap = 2000000,
 #           bin_list = test_bin_list)
 
+# -----------------------------------------------------------------------------
+# UPDATED Aug 28, 2015 12:26 PM
+# FUNCTION:     Manhattan()
+#' Draw Manhattan plots
+#' @title       Draw Manhattan plots
+#' @param gwas_res_marker_id      The ID of markers from GWAS result
+#' @param gwas_res_marker_value   The value of markers from GWAS result
+#' @param map_marker_id           vector, map info - marker ID           
+#' @param map_marker_chr          vector, map info - marker chromosome
+#' @param map_marker_pos          vector, map info - marker position
+#' @param map_allosome            vector, map info - ID of allosome
+#' @param map_unmapped            vector, map info - ID of "unmapped"
+#' @param map_mitochondria        vector, map info - ID of mitochondria
+#' @param bin_list                a list of plotted regions. whole genome 
+#'                                by default
+#' @param plot_allosome           logical, plot allosome or not.
+#' @param plot_unmapped           logical, plot unmapped or not.
+#' @param plot_mt                 logical, plot mitochondria or not.
+#' @param gap                     The gap between chromosomes in the plot
+#' @param y_lim                   The y-axis range
+#' @param x_lab                   Character, the label of the x-axis
+#' @param y_lab                   Character, the label of the y-axis
+#' @param title                   Character, the title of the plot
+#' @param axes                    Logical, draw the axes or not
+#' @param cols                    A Vector with 2 elements of color. can be used
+#'                                to distinguish two adjacent chromosomes.
+#' @return      A data frame of chromosome information (from DrawAFrame())
+# -----------------------------------------------------------------------------
+#' @export
+#' @note        This is a function that draws Manhattan plots
+# -----------------------------------------------------------------------------
 
 Manhattan = function(gwas_res_marker_id,                        # GWAS
                      gwas_res_marker_value,                     # GWAS
@@ -210,6 +241,11 @@ Manhattan = function(gwas_res_marker_id,                        # GWAS
   
   
   ## main
+  ### check marker id
+  if(any(!(gwas_res_marker_id %in% map_marker_id))){
+    stop("Some markers are not listed in the map. Please check.")
+  }
+  
   ### map and bin
   sorted_map = sort_map(MarID        = map_marker_id, 
                         chromosome   = map_marker_chr,
@@ -241,13 +277,15 @@ Manhattan = function(gwas_res_marker_id,                        # GWAS
   }
   
   ### plot the frame
-  ggplot(res_plot, aes(x = x, y = Value))             +
-    geom_point(colour = res_plot$col_group)           + 
-    scale_x_continuous(breaks = bin_frame$x_chr_mid,
-                       labels = bin_frame$Chr)        + 
-    labs(x = x_lab, y = y_lab, title = title)         +
-    ylim(y_lim[1], y_lim[2]) +
-    theme_bw()
+  p = ggplot(res_plot, aes(x = x, y = Value))             +
+        geom_point(colour = res_plot$col_group)           + 
+        scale_x_continuous(breaks = bin_frame$x_chr_mid,
+                           labels = bin_frame$Chr)        + 
+        labs(x = x_lab, y = y_lab, title = title)         +
+        ylim(y_lim[1], y_lim[2]) +
+        theme_bw()
+  print(p)
+  return(res_plot)
 }
 
 # # -----------------------------------------------------------------------------
