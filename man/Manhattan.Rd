@@ -4,36 +4,59 @@
 \alias{Manhattan}
 \title{Draw Manhattan plots}
 \usage{
-Manhattan(res.gwas.ID, res.gwas.value, map.sorted, gap = 5e+07, ylim = NULL,
-  xlab = "Chromosome", ylab = "", title = "", axes = TRUE,
-  ltype = "p", pch = 20, cols = c("dark blue", "cornflowerblue"))
+Manhattan(gwas_res_marker_id, gwas_res_marker_value, map_marker_id,
+  map_marker_chr, map_marker_pos, map_allosome = c("X", "Y"),
+  map_unmapped = "0", map_mitochondria = "MT", bin_list = NULL,
+  plot_allosome = F, plot_unmapped = F, plot_mt = F, gap = 5e+07,
+  y_lim = NULL, x_lab = "Chromosome", y_lab = "Value", title = "",
+  axes = TRUE, cols = c("dark blue", "cornflowerblue"))
 }
 \arguments{
-\item{res.gwas.ID}{The ID of markers from GWAS result}
+\item{gwas_res_marker_id}{The ID of markers from GWAS result}
 
-\item{res.gwas.value}{The value of markers from GWAS result}
+\item{gwas_res_marker_value}{The value of markers from GWAS result}
 
-\item{map.sorted}{A sorted map}
+\item{map_marker_id}{vector, map info - marker ID}
+
+\item{map_marker_chr}{vector, map info - marker chromosome}
+
+\item{map_marker_pos}{vector, map info - marker position}
+
+\item{map_allosome}{vector, map info - ID of allosome}
+
+\item{map_unmapped}{vector, map info - ID of "unmapped"}
+
+\item{map_mitochondria}{vector, map info - ID of mitochondria}
+
+\item{bin_list}{a list of plotted regions. whole genome 
+by default}
+
+\item{plot_allosome}{logical, plot allosome or not.}
+
+\item{plot_unmapped}{logical, plot unmapped or not.}
+
+\item{plot_mt}{logical, plot mitochondria or not.}
 
 \item{gap}{The gap between chromosomes in the plot}
 
-\item{ylim}{The y-axis range}
+\item{y_lim}{The y-axis range}
 
-\item{xlab, ylab}{Parameters passed to plot.default()}
+\item{x_lab}{Character, the label of the x-axis}
+
+\item{y_lab}{Character, the label of the y-axis}
 
 \item{title}{Character, the title of the plot}
 
 \item{axes}{Logical, draw the axes or not}
-
-\item{ltype}{"lty" passed to plot.default()}
-
-\item{pch}{Type of points}
 
 \item{cols}{A Vector with 2 elements of color. can be used
 to distinguish two adjacent chromosomes.}
 }
 \value{
 A data frame of chromosome information (from DrawAFrame())
+}
+\description{
+Draw Manhattan plots
 }
 \note{
 This is a function that draws Manhattan plots

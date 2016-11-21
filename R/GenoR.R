@@ -11,6 +11,8 @@
 #' @importFrom graphics axis plot points
 #' @importFrom stats predict smooth.spline
 #' @importFrom Matrix sparseMatrix
+#' @importFrom naturalsort naturalfactor
 #' @import dplyr
+#' @import ggplot2
 
 NULL
