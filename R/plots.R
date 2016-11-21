@@ -86,7 +86,7 @@
 #' @param axes                    Logical, draw the axes or not
 #' @param cols                    A Vector with 2 elements of color. can be used
 #'                                to distinguish two adjacent chromosomes.
-#' @return      A data frame of chromosome information (from DrawAFrame())
+#' @return      A data frame of chromosome information
 # -----------------------------------------------------------------------------
 #' @export
 #' @note        This is a function that draws Manhattan plots
