@@ -288,6 +288,8 @@ Manhattan = function(gwas_res_marker_id,                        # GWAS
   return(res_plot)
 }
 
+
+
 # # -----------------------------------------------------------------------------
 # # UPDATED Aug 27, 2015 5:35 PM
 # # FUNCTION:     DrawAFrame(map.sorted, gap, 
