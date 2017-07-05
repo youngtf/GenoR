@@ -64,4 +64,3 @@ monoAlle = geno.biAL2monoAL(genodata)
 # attr(,"class")
 # [1] "monoAL"    "monoAL_AB"
 }
-

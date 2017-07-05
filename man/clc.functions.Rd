@@ -11,4 +11,3 @@ This function looks for all functions defined in current
              session and cleaning them. It may be useful when a 
              environment image is loaded and functions may be masked.
 }
-

@@ -102,4 +102,3 @@ CreateWindowMap(SID, chromosome, position, distance = 30)
 # attr(,"class")
 # [1] "geno.map.window"
 }
-
