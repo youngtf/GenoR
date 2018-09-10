@@ -132,7 +132,7 @@ Manhattan = function(gwas_res_marker_id,                        # GWAS
     
     res_map_sorted = res_map[order(res_map$Chr, res_map$Pos),]
     
-    return(res_map)
+    return(res_map_sorted)
   }
   
   ### bin_list functions
