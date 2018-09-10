@@ -71,4 +71,3 @@ geno.Num2AB(a,na.geno = -9)
 # R2 "AA" NA   "AA" "BB"
 # R3 "AB" "AB" "AB" NA  
 }
-

@@ -37,4 +37,3 @@ geno.impu.ave(mat.AB2Num)
 # R2  1  0 1.0 -1
 # R3  0  0 0.0  0
 }
-

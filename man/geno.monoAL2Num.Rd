@@ -33,4 +33,3 @@ monoAlle.AB = geno.AGCT2AB(monoAlle)
 # R2  1 -5  1 -1
 # R3  0  0  0 -5
 }
-

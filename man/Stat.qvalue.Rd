@@ -23,4 +23,3 @@ q2 = Stat.qvalue(p)
 \references{
 Estimating the False Discovery Rate using SAS (Paper 190-31)
 }
-

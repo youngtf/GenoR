@@ -31,4 +31,3 @@ geno.monoAL2biAL(monoAlle)
 # R2 "AA" "--" "BB" "TT"
 # R3 "AB" "AB" "AB" "--"
 }
-

@@ -30,4 +30,3 @@ A data frame that can be written as a PED file
 \note{
 This function does some simple tests and combine available data
 }
-

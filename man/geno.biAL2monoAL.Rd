@@ -71,4 +71,3 @@ genodata = rbind(c("AA","AB","--","CC")
 # 2: In geno.biAL2monoAL(genodata) :
 #   no valid colnames for the input data, simple names will be given.
 }
-

@@ -53,7 +53,7 @@ by default}
 to distinguish two adjacent chromosomes.}
 }
 \value{
-A data frame of chromosome information (from DrawAFrame())
+A data frame of chromosome information
 }
 \description{
 Draw Manhattan plots
@@ -61,4 +61,3 @@ Draw Manhattan plots
 \note{
 This is a function that draws Manhattan plots
 }
-

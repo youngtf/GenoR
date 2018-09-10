@@ -105,43 +105,44 @@ strsplit.mat = function(vec.char,sep=" "){
 # -----------------------------------------------------------------------------
 # UPDATED Aug 26, 2015 2:59 PM
 # FUNCTION:     blank.remover(vec.char)
-#' @title       Remove blanks in the end of characters
-#' @param       vec.char A vector of characters for testing
-#' @return      A vector of characters
+# @title       Remove blanks in the end of characters
+# @param       vec.char A vector of characters for testing
+# @return      A vector of characters
 # -----------------------------------------------------------------------------
-#' @export      
-#' @note        This function detects blanks in the end of characters and 
-#'              delete them
-#' @examples    
-#' vec.char = c("QWERTYUIOP   ",
-#'              "ASDFGHJKL:  ",
-#'              "ZXCVBNM<>? ")
-#' blank.remover(vec.char)
-#' # Blank found! 
-#' # Blank found! 
-#' # Blank found! 
-#' # [1] "QWERTYUIOP" "ASDFGHJKL:" "ZXCVBNM<>?"
+#  /@export     ## replaced by built-in function R/base::trimws()
+# @note        This function detects blanks in the end of characters and 
+#              delete them
+# @examples    
+# vec.char = c("QWERTYUIOP   ",
+#              "ASDFGHJKL:  ",
+#              "ZXCVBNM<>? ")
+# blank.remover(vec.char)
+# # Blank found! 
+# # Blank found! 
+# # Blank found! 
+# # [1] "QWERTYUIOP" "ASDFGHJKL:" "ZXCVBNM<>?"
+# 
 # -----------------------------------------------------------------------------
-
-blank.remover = function(vec.char){
-    blank.rm.ele = function(char){
-        blank_found = FALSE
-        n = nchar(char)
-        while(substr(char,n,n) == " "){
-            blank_found = TRUE
-            char = substr(char,1,(n-1))
-            n = nchar(char)
-        }
-        if (blank_found) cat("Blank found! \n")
-        char
-    }
-    res.char = vec.char
-    for (i in 1:length(vec.char)){
-      if (!is.na(res.char[i]))
-        res.char[i] = blank.rm.ele(vec.char[i])
-    } 
-    res.char
-}
+# 
+# blank.remover = function(vec.char){
+#     blank.rm.ele = function(char){
+#         blank_found = FALSE
+#         n = nchar(char)
+#         while(substr(char,n,n) == " "){
+#             blank_found = TRUE
+#             char = substr(char,1,(n-1))
+#             n = nchar(char)
+#         }
+#         if (blank_found) cat("Blank found! \n")
+#         char
+#     }
+#     res.char = vec.char
+#     for (i in 1:length(vec.char)){
+#       if (!is.na(res.char[i]))
+#         res.char[i] = blank.rm.ele(vec.char[i])
+#     } 
+#     res.char
+# }
 
 # -----------------------------------------------------------------------------
 # UPDATED Aug 26, 2015 3:22 PM

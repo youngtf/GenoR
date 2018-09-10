@@ -29,4 +29,3 @@ strsplit.mat(vec.char, "")
 # [2,] "A"  "S"  "D"  "F"  "G"  "H"  "J"  "K"  "L"  ":"  
 # [3,] "Z"  "X"  "C"  "V"  "B"  "N"  "M"  "<"  ">"  "?"  
 }
-
