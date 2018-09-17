@@ -194,3 +194,115 @@ read_plink_linear = function(file, map, png_prefix = "./plink_linear_manh_"){
     res_file, map, png_name = paste0(png_prefix, ".png"))
   return(list(res_linear, res_plot))
 }
+
+# -----------------------------------------------------------------------------
+# FUNCTION:     read_phenotype_lasso
+#' DESCRIPTION
+#' @rdname      read_plink
+#' @title       Read plink-style phenotype data
+#' @param       file the plink-style phenotype file
+#' @param       colClasses the colClasses argument passed to read.table
+#' @return      a data frame
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        Read plink-style phenotype data file for lasso analysis
+# @examples    \
+# -----------------------------------------------------------------------------
+read_phenotype_plink = function(file, colClasses = NA){
+  pheno_data = read.table(
+    file, as.is = TRUE, header = TRUE, na.strings = -9, colClasses = colClasses)
+  return(pheno_data)
+}
+
+# -----------------------------------------------------------------------------
+# FUNCTION:     read_genotype_plink
+#' DESCRIPTION
+#' @rdname      read_plink
+#' @title       Read plink-style genotype data
+#' @param       file the plink-style genotype file (PED file)
+#' @param       lite if the ped file is a lite one (e.g. 3+nmarker*2 columns)
+#' @return      a matrix
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        Read plink-style genotype data file for lasso analysis
+# @examples    \
+# -----------------------------------------------------------------------------
+read_genotype_plink = function(file, lite = FALSE){
+  cat(" - Reading genotype files...\n")
+  ped_file = fread(file = file, verbose = FALSE,
+                   header = F, colClasses = "Character", data.table = FALSE)
+  cat(" - Extrating genotypes...\n")
+  if(lite){
+    geno_mat = as.matrix(ped_file[,-(1:3)])
+    IID = ped_file[,1]
+  } else {
+    geno_mat = as.matrix(ped_file[,-(1:6)])
+    IID = ped_file[,2]
+  }
+  rm(ped_file); gc()
+  cat(" - Changing genotype coding...\n")
+  geno_bial = matrix(paste0(geno_mat[,c(TRUE,FALSE)],geno_mat[,c(FALSE,TRUE)]), 
+                     nrow = nrow(geno_mat), dimnames = list(IID))
+  return(geno_bial)
+}
+
+# -----------------------------------------------------------------------------
+# FUNCTION:     read_map_plink
+#' DESCRIPTION
+#' @rdname      read_plink
+#' @title       Read plink-style map data
+#' @param       file the plink-style map file
+#' @return      a data frame
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        Read plink-style map data file for lasso analysis
+# @examples    \
+# -----------------------------------------------------------------------------
+read_map_plink = function(file){
+  pheno_data = read.table(
+    file, header = F, colClasses = c("character","character","integer"), 
+    col.names = c("CHR","SNPID","POS"))
+  return(pheno_data[,c(2,1,3)])
+}
+
+# -----------------------------------------------------------------------------
+# FUNCTION:     check_plink
+#' DESCRIPTION
+#' @rdname      read_plink
+#' @title       check plink-style data
+#' @param       pheno the pheno data obtain from read_phenotype_plink()
+#' @param       geno the geno data obtain from read_genotype_plink()
+#' @param       map the map data obtain from read_map_plink()
+#' @param       covar the covar data obtain from read_phenotype_plink()
+#' @return      a checked geno data
+# -----------------------------------------------------------------------------
+#' @export      
+#' @note        check the data from plink data files.
+# @examples    \
+# -----------------------------------------------------------------------------
+check_plink = function(pheno, geno, map, covar = NULL){
+  # Check map of SNPs
+  if(nrow(map) != ncol(geno)){
+    stop("The number of SNPs in the genofile and map file does not match!")
+  }
+  colnames(geno) = map$SNPID
+  
+  # Check animal ID
+  if(any(!(rownames(geno) %in% pheno$IID)) | 
+     any(!(pheno$IID %in% rownames(geno)))){
+    stop("The animal ID in the geno file and pheno file does not match!") 
+  }
+  if(any(rownames(geno) != pheno$IID)){
+    warning("Reorder needed for Animal ID: geno file")
+  }
+  if(!is.null(covar)){
+    if(any(!(covar$IID %in% pheno$IID)) | 
+       any(!(pheno$IID %in% covar$IID))){
+      stop("The animal ID in the geno file and pheno file does not match!") 
+    }
+    if(any(covar$IID != pheno$IID)){
+      warning("Reorder needed for Animal ID: covar file")
+    }
+  }
+  return(geno)
+}
