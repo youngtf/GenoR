@@ -13,9 +13,10 @@
 #' @importFrom Matrix sparseMatrix
 #' @importFrom naturalsort naturalfactor
 #' @importFrom data.table fread
-#' @import dplyr
+#' @importFrom parcor adalasso
+#' @importFrom pbapply pbapply
+#' @import dplyr 
 #' @import ggplot2
-#' @import pbapply
 #' @import stringr
 #' @import glmnet
 
