@@ -121,6 +121,8 @@ Manhattan = function(gwas_res_marker_id,                        # GWAS
                                 Pos              = position, 
                                 stringsAsFactors = F))
     
+    res_map = res_map[order(res_map$Chr, res_map$Pos),]
+    
     ## add attributes
     attributes(res_map)$chrom_id     = levels(chr_factor)
     attributes(res_map)$n_chromosome = length(attributes(res_map)$chrom_id)
@@ -129,10 +131,8 @@ Manhattan = function(gwas_res_marker_id,                        # GWAS
     attributes(res_map)$MT           = mitochondria
     attributes(res_map)$chr_len      = tapply(res_map$Pos, 
                                               res_map$Chr, max)
-    
-    res_map_sorted = res_map[order(res_map$Chr, res_map$Pos),]
-    
-    return(res_map_sorted)
+
+    return(res_map)
   }
   
   ### bin_list functions

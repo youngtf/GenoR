@@ -48,14 +48,13 @@
 # Notes
 # Descriptions:      To-do List
 # To-do              
-
+# [NEW] geno.Num2AB: add NA output
 # 1 combine PedR and PED function
 # 2 A wraper for formatting (and AB file output)
 # 3 A AGCT->AB function based on exsiting file
 # 4 add PED fast writing option (using matrix) 
 # 5 new option: no sex column in PED
 # Last Update:       Oct 21, 2015 10:59 AM
-
 # -----------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Feb 16, 2015 14:12
@@ -574,83 +573,7 @@ geno.qc = function(genodata,code=c(1,0,-1),na.string = NULL){
       return(genodata + mat_mean)
   }
 
-# -----------------------------------------------------------------------------
-# UPDATED Aug 25, 2015 5:28 PM
-# FUNCTION:     geno.mono2PED(monodata,IndID,lite,FamilyID,PID,MID,Sex,Pheno)
-#' @title       Create PED files
-#' @param       monodata A monoAL object
-#' @param       IndID    A vector of Individual ID
-#' @param       lite     If using a lite version of PED file 
-#' @param       FamilyID A vector of family ID
-#' @param       PID      A vector of paternal ID
-#' @param       MID      A vector of maternal ID
-#' @param       Sex      A vector of individual sex
-#' @param       Pheno    A vector of phenotypic value
-#' @return      A data frame that can be written as a PED file
-# -----------------------------------------------------------------------------
-#' @export      
-#' @note        This function does some simple tests and combine available data
-# -----------------------------------------------------------------------------
-# -----------------------------------------------------------------------------
-# Jul 10, 2015 19:37
-# By default, each line of the MAP file describes a single marker and must 
-# contain exactly 4 columns: 
-#     chromosome (1-22, X, Y or 0 if unplaced) 
-#     rs# or snp identifier 
-#     Genetic distance (morgans) 
-#     Base-pair position (bp units)
-# Genetic distance can be specified in centimorgans with the --cm flag. 
-# Alternatively, you can use a MAP file with the genetic distance 
-# excluded by adding the flag --map3
-# -----------------------------------------------------------------------------
 
-  geno.mono2PED = function(monodata,
-                           IndID,
-                           lite     = T,
-                           FamilyID = NULL,
-                           PID      = NULL,
-                           MID      = NULL,
-                           Sex      = NULL,
-                           Pheno    = NULL
-                           ){
-    # check the animal id
-    if (any(IndID != monodata$names.ind)){ 
-      stop("wrong ID!")
-    }
-    
-    # Geno data
-    Geno = matrix("",monodata$dim[1],monodata$dim[2]*2)
-    Geno[,c(TRUE,FALSE)] = monodata$Allele_1
-    Geno[,c(FALSE,TRUE)] = monodata$Allele_2
-    
-    if (lite){
-      # result
-      res.PED = data.frame(IndID    = IndID,
-                           Sex      = Sex,
-                           Pheno    = Pheno,
-                           Geno     = Geno,
-                           stringsAsFactors = FALSE)
-    } else {
-      # FAKE info
-      nind = length(IndID)
-      if (is.null(FamilyID)) FamilyID = paste0("Family_",seq(nind))
-      if (is.null(PID))      PID      = rep(0,nind)
-      if (is.null(MID))      MID      = rep(0,nind)
-      if (is.null(Sex))      Sex      = rep(1,nind)
-      if (is.null(Pheno))    Pheno    = rep(1,nind)
-      # result
-      res.PED = data.frame(FamilyID = FamilyID,
-                           IndID    = IndID,
-                           PID      = PID,
-                           MID      = MID,
-                           Sex      = Sex,
-                           Pheno    = Pheno,
-                           Geno     = Geno,
-                           stringsAsFactors = FALSE
-                           )
-      }
-    return(res.PED)
-  }
 
 # -----------------------------------------------------------------------------
 # Apr 20, 2015 19:54        rrBLUP
