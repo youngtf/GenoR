@@ -12,7 +12,11 @@
 #' @importFrom stats predict smooth.spline
 #' @importFrom Matrix sparseMatrix
 #' @importFrom naturalsort naturalfactor
+#' @importFrom data.table fread
 #' @import dplyr
 #' @import ggplot2
+#' @import pbapply
+#' @import stringr
+#' @import glmnet
 
 NULL
